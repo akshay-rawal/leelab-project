@@ -43,9 +43,9 @@ const registerUser = asyncHandlers(async (req, res) => {
     });
     
     const token = jwt.sign(
-        { userId: user.id, email: user.email, role: user.role }, // Payload (user data you want to include)
-        JWT_SECRET_KEY, // Secret key to sign the token
-        { expiresIn: "1h" } // Token expiration time (1 hour in this example)
+        { userId: user.id, email: user.email, role: user.role }, 
+        JWT_SECRET_KEY, 
+        { expiresIn: "1h" } 
       );
 
     return res.status(200).json(new apiResponseHandler(200, "User registered successfully", {
@@ -53,8 +53,8 @@ const registerUser = asyncHandlers(async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        token:token
-      }
+      },
+      token
     }));
 
   } catch (error) {
