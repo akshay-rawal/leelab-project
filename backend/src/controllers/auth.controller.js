@@ -1,5 +1,5 @@
 
-import { PrismaClient, UserRole } from "../generated/prisma/client.js";
+import UserRole  from "../generated/prisma/client.js";
 import { asyncHandlers } from "../utills/asyncHandler.js";
 import { apiResponseHandler } from "../utills/apiresponseHandler.js";
 import { apiError } from "../utills/apiErrorHandler.js";
@@ -39,6 +39,9 @@ const registerUser = asyncHandlers(async (req, res) => {
       role: UserRole.USER
     }
   });
+
+  console.log("data kyu nahi aa rha hai",user);
+  
 
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);

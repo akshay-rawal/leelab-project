@@ -3,16 +3,16 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
 // Password functions
-export const hashPassword = async (password) => {
+ const hashPassword = async (password) => {
   return await bcrypt.hash(password, 10);
 };
 
-export const isPasswordCorrect = async (plainPassword, hashedPassword) => {
+ const isPasswordCorrect = async (plainPassword, hashedPassword) => {
   return await bcrypt.compare(plainPassword, hashedPassword);
 };
 
 // JWT tokens
-export const generateAccessToken = (user) => {
+ const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user.id, email: user.email },
     process.env.ACCESS_JWT_SECRET,
@@ -20,7 +20,7 @@ export const generateAccessToken = (user) => {
   );
 };
 
-export const generateRefreshToken = (user) => {
+ const generateRefreshToken = (user) => {
   return jwt.sign(
     { id: user.id, email: user.email },
     process.env.ACCESS_REFRESH_SECRET,
@@ -29,7 +29,7 @@ export const generateRefreshToken = (user) => {
 };
 
 // Temporary token (e.g. for password reset)
-export const generateTemporaryToken = () => {
+ const generateTemporaryToken = () => {
   const unHashedToken = crypto.randomBytes(20).toString("hex");
   const hashToken = crypto.createHash("sha256").update(unHashedToken).digest("hex");
   const tokenExpiry = Date.now() + 20 * 60 * 1000; // 20 minutes

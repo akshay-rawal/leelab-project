@@ -14,10 +14,11 @@ app.get("/",(req,res)=>{
     res.send("welcome to my leedcode💪")
 })
 
-app.use("api/vi/user",authRoutes)
+app.use("/api/vi/users",authRoutes)
 
 
-app.listen(()=>{
+app.listen(port,
+    ()=>{
     console.log(`server is running on port ${port}`);
     
 })
