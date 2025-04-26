@@ -4,6 +4,7 @@ import { asyncHandlers } from "../utills/asyncHandler.js";
 import { apiResponseHandler } from "../utills/apiresponseHandler.js";
 import { apiError } from "../utills/apiErrorHandler.js";
 import { db } from "../libs/db.js";
+import jwt from "jsonwebtoken"
 import {
   hashPassword,
   generateAccessToken,
@@ -130,5 +131,38 @@ const loginUser = asyncHandlers(async (req, res) => {
     .json(new apiError(400, "Invalid refresh token"));
 });
 
+// middlewares/authenticateUser
+const verifyUser = asyncHandlers(async (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  console.log("Received Token:", token);
 
-export { registerUser, loginUser,logoutUser };
+
+  if (!token) {
+    throw new apiError(401, "Unauthorized: No token provided");
+  }
+
+  try {
+    const decoded = jwt.verify(token,process.env.ACCESS_JWT_SECRET);
+    console.log("Decoded Token:", decoded);
+    const user = await db.user.findUnique({
+      where: { id: decoded.id },
+    });
+
+    if (!user) {
+      throw new apiError(404, "User not found");
+    }
+
+
+    req.user = user; // Attach user to request
+    next();
+  } catch (err) {
+    console.error("Error verifying token:", err);
+    throw new apiError(401, "Unauthorized: Invalid token");
+  }
+});
+
+
+
+
+
+export { registerUser, loginUser,logoutUser,verifyUser };
