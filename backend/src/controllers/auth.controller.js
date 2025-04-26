@@ -52,7 +52,8 @@ const registerUser = asyncHandlers(async (req, res) => {
       user: {
         id: user.id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        role:  user.role
       },
       accessToken,
       refreshToken
@@ -138,18 +139,25 @@ const verifyUser = asyncHandlers(async (req, res, next) => {
 
 
   if (!token) {
-    throw new apiError(401, "Unauthorized: No token provided");
-  }
+    return res.status(400).json(new apiError(400, "Invalid-token"));
+}
 
   try {
     const decoded = jwt.verify(token,process.env.ACCESS_JWT_SECRET);
     console.log("Decoded Token:", decoded);
     const user = await db.user.findUnique({
       where: { id: decoded.id },
+      select:{
+        id:true,
+        Image:true,
+        name:true,
+        email:true,
+        role:true
+      }
     });
 
     if (!user) {
-      throw new apiError(404, "User not found");
+      return res.status(404).json(new apiError(404, "user not found!"));
     }
 
 
@@ -157,7 +165,7 @@ const verifyUser = asyncHandlers(async (req, res, next) => {
     next();
   } catch (err) {
     console.error("Error verifying token:", err);
-    throw new apiError(401, "Unauthorized: Invalid token");
+    return res.status(401).json(new apiError(401, "please login or register yourself"));
   }
 });
 
