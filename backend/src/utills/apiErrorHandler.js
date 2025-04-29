@@ -8,7 +8,7 @@
                 value: message,
                 enumerable: true,
               });
-              (this.statusCode = statusCode), (this.message = message);
+              this.statusCode = statusCode;
               this.error = errors; //parameter me empty array set kiya hai jo array aayegi vo yahan value set ho jayegi
               this.success = false;
           

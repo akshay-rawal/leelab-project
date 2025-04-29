@@ -15,7 +15,7 @@ app.get("/",(req,res)=>{
 })
 
 app.use("/api/vi/users",authRoutes)
-
+app.use("/api/vi/problems",problemRoutes)
 
 app.listen(port,
     ()=>{
