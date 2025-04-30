@@ -1,6 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import authRoutes from "./routes/userAuth.routes.js"
+import problemRoutes from "./routes/problem.routes.js"
 
 dotenv.config()
 

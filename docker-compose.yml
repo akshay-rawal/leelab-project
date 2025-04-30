@@ -1,18 +1,49 @@
-version: '3'
+version: '3.8'
 
 services:
   db:
-    image: postgres
-    env_file:
-      - ./backend/.env  # env file ka relative path
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: akki7698rawal
+      POSTGRES_USER: leetcode-user
     ports:
-      - "5433:5432"  # Postgres ko port 5433 par host machine pe map kar rahe hain
+      - "5433:5432"
 
   redis:
-    image: redis
-    env_file:
-      - ./backend/.env  # Redis ke liye bhi env file ka path specify kiya
+    image: redis:latest
     ports:
       - "6379:6379"
 
+  judge0:
+    image: judge0/judge0:1.13.1
+    environment:
+      POSTGRES_PASSWORD: akki7698rawal  # Same password as db service
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://leetlab-postgres:Jahan1234@db:5432/leetlab-postgres
+    volumes:
+      - ./backend:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+      - judge0
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+
+networks:
+  default:
+    driver: bridge
 

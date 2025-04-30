@@ -1,10 +1,7 @@
 
-import { asyncHandlers } from "../../utills/asyncHandler";
-import { apiError } from "../../utills/apiErrorHandler";
-import { apiResponseHandler } from "../../utills/apiresponseHandler";
-import { db } from "../../libs/db";
-
-
+import { asyncHandlers } from "../utills/asyncHandler.js";
+import { apiError } from "../utills/apiErrorHandler.js";
+import { db } from "../libs/db.js";
 
 export const isAdmin = asyncHandlers(async (req, res, next) => {
     try {

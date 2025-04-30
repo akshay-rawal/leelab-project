@@ -1,9 +1,9 @@
 
     import express from "express"
-    import { verifyUser } from "../controllers/auth.controller"
-    import { isAdmin } from "../controllers/problem.controller.js/isAdmin"
-    import { problemCreateValidator } from "../utills/validators/problemValidator"
-
+    import { verifyUser } from "../controllers/auth.controller.js"
+    import { problemCreateValidator } from "../utills/validators/problemValidator.js"
+    import { isAdmin } from "../controllers/isAdmin.js"
+    import { createProblem,getAllProblems,getSolvedProblemByUser,updateProblem,getProblemById,deleteProblem } from "../controllers/problem.controller.js"
     const problemRoutes = express.Router()
 
 
@@ -13,7 +13,7 @@
     problemRoutes.delete("/problem-delete/:id",verifyUser,isAdmin,deleteProblem)
     problemRoutes.get("getall-problems",verifyUser,getAllProblems)
     problemRoutes.get("getall-problems/:id",verifyUser,getProblemById)
-    problemRoutes.get("/get-solved-problem",verifyUser,getSolvedProblem)
+    problemRoutes.get("/get-solved-problem",verifyUser,getSolvedProblemByUser)
 
 
 
