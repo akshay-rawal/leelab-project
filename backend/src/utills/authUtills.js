@@ -14,7 +14,7 @@ import crypto from "crypto";
 // JWT tokens
  const generateAccessToken = (user) => {
   return jwt.sign(
-    { id: user.id, email: user.email },
+    { id: user.id, email: user.email, role: user.role },
     process.env.ACCESS_JWT_SECRET,
     { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
   );
