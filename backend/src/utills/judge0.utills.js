@@ -1,42 +1,87 @@
+import axios from "axios";
 
- 
- export const getJudge0LanguageId = (language)=> {
-    const languageMap = {
-      "javascript": 63,
-      "python": 71,
-      "java": 62,
-      "c": 50,
-      "cpp": 54,
-      // aur bhi languages de sakte hai
-    };
-  
-    return languageMap[language.toLowerCase()] || null;
+export const getJudge0LanguageId = (language) => {
+  const languageMap = {
+    "javascript": 63,
+    "python": 71,
+    "java": 62,
+    "c": 50,
+    "cpp": 54,
+    // Add more languages as needed
+  };
+
+  const id = languageMap[language.toLowerCase()] || null;
+  console.log(`Language: ${language}, Language ID: ${id}`);
+  return id;
+};
+
+export const submitBatch = async (submissions) => {
+  try {
+    console.log("Submitting batch to Judge0...");
+    console.log("Submissions payload:", submissions);
+    console.log("Using Judge0 API URL:", process.env.JUDGE0_API_URL);
+
+    const { data } = await axios.post(
+      `${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false&wait=false`,
+      
+      { submissions },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("Submission response data:", data);
+    return data;
+  } catch (error) {
+    console.error("Error in submitBatch:", error.message);
+    if (error.response) {
+      console.error("Response error data:", error.response.data);
+    }
+    throw error;
   }
-  
-  export const submitBatch = async(submssion)=>{
-    const {data} = await axios.post(`${process.env.JUDGE0_API_URL}/submissions/?base64_encoded=false&wait=false`,{submssion})
+};
 
-    console.log("submission data:",data);
-    return data
-    
-  }  
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  const sleep = (ms)=> new Promise((resolve)=> setTimeout(resolve,ms))
+export const pollBatchResults = async (tokens) => {
+  console.log("Polling batch results for tokens:", tokens);
+  while (true) {
+    try {
+      console.log("Using Judge0 API URL:", process.env.JUDGE0_API_URL);
 
-  export const pollBatchResults = async (tokens)=>{
-    while(true){
-      const {data} = await axios.get(`${process.env.JUDGE0_API_URL}/submissions/batch`,
+      const { data } = await axios.get(
+        `${process.env.JUDGE0_API_URL}/submissions/batch`,
         {
-          params:{
-            tokens:tokens.join(","),
+          params: {
+            tokens: tokens.join(","),
             base64_encoded: false,
           },
-          headers:{"content-type":"application/json"}
+          headers: { "Content-Type": "application/json" },
         }
-      )
-       const result = data.submissions
-       const isllDone = result.every((r)=>r.status.id !== 1 && r.status.id !== 2)
-       if(isllDone) return result
-       await sleep(1000)
+      );
+
+      const result = data.submissions;
+      console.log("Polling response:", result);
+
+      const isAllDone = result.every(
+        (r) => r.status.id !== 1 && r.status.id !== 2
+      );
+
+      if (isAllDone) {
+        console.log("All submissions processed.");
+        return result;
+      }
+
+      console.log("Some submissions still processing. Retrying in 10s...");
+      await sleep(10000);
+    } catch (error) {
+      console.error("Error while polling batch results:", error.message);
+      if (error.response) {
+        console.error("Polling response error data:", error.response.data);
+      }
+      throw error;
     }
   }
+};
