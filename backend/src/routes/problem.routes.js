@@ -12,7 +12,7 @@
     problemRoutes.patch("/update-problem/:id",verifyUser,isAdmin,updateProblem) //done
     problemRoutes.delete("/problem-delete/:id",verifyUser,isAdmin,deleteProblem)  //done
     problemRoutes.get("/getAll-problems",verifyUser,getAllProblems)   //done
-    problemRoutes.get("/getall-problems/:id",verifyUser,getProblemById)  //done
+    problemRoutes.get("/get-problems/:id",verifyUser,getProblemById)  //done
     problemRoutes.get("/get-solved-problem",verifyUser,getSolvedProblemByUser)
 
 

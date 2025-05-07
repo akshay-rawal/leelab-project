@@ -20,43 +20,86 @@ enum Role {
 }
 
 model User {
-  id           String    @id @default(uuid())
+  id           String  @id @default(uuid())
   name         String?
-  email        String    @unique
+  email        String  @unique
   image        String?
-  role         Role      @default(USER)
+  role         Role    @default(USER)
   password     String
   refreshToken String?
 
-  problems     Problem[] // User created problems
+  problems   Problem[] // User created problems
+  submission Submission[]
 
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Problem {
-  id                String    @id @default(uuid())
+  id                String     @id @default(uuid())
   title             String
   description       String
   difficulty        Difficulty
-  constraints       String[] 
+  constraints       String[]
   examples          Json
   testCases         Json
-  tag                String
+  tag               String
   codeSnippets      Json
   hints             String[]
   editorial         String?
   referenceSolution Json
-  
-  createdById       String
-  createdBy         User      @relation(fields: [createdById], references: [id],onDelete: Cascade)
 
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdById String
+  createdBy   User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  submission  Submission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Difficulty {
   EASY
   MEDIUM
   HARD
+}
+
+model Submission {
+  id            String   @id @default(uuid())
+  userId        String
+  problemId     String
+  attemptCount  Int      @default(1)
+  isSolved      Boolean  @default(false)
+  stdin         String? // User input (stdin)
+  stdout        String? // Judge0 output (stdout)
+  code          String // User code
+  compileOutput String? //compleoutput ek object bhi ho skta hai
+  compileStatus String? // Compilation status: 'success' or 'error'
+  lastTriedAt   DateTime @default(now())
+  memory        String?
+  time          String?
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem   Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  testCases TestCaseResult[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TestCaseResult {
+  id             String     @id @default(uuid())
+  submissionId   String
+  testCaseIndex       Int
+  passed         Boolean
+  stdout         String
+  expectedOutput String
+  stderr         String?
+  compileOutput  String?
+  status         String
+  memory         String?
+  time           String?
+  Submission     Submission @relation(fields: [submissionId], references: [id])
+  @@index([submissionId])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
