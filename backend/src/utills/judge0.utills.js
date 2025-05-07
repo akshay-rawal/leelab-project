@@ -17,14 +17,12 @@ export const getJudge0LanguageId = (language) => {
 
 export const submitBatch = async (submissions) => {
   try {
-    console.log("Submitting batch to Judge0...");
-    console.log("Submissions payload:", submissions);
-    console.log("Using Judge0 API URL:", process.env.JUDGE0_API_URL);
+    
 
     const { data } = await axios.post(
       `${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false&wait=false`,
       
-      { submissions },
+       submissions,
       {
         headers: {
           "Content-Type": "application/json",
