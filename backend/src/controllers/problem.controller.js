@@ -112,63 +112,114 @@ const createProblem = asyncHandlers(async (req, res) => {
   }
 });
 
-const deleteProblem = asyncHandlers(async (req, res) => {});
-const updateProblem = asyncHandlers(async (req, res) => {
- try {
-   const { id } = req.params;
-  
- 
- const existingProblem = await prisma.problem.findUnique({
-       where: { id }, 
-     });
- if (!existingProblem) {
-   return res.status(404).json(new apiError(404, "Problem not found"));
+const deleteProblem = asyncHandlers(async (req, res) => {
+  try {
+    const { id } = req.params;
 
- }
- const allowedFields = [
-  "title", "description", "difficulty", "tag", "constraints",
-  "hints", "testCases", "examples", "referenceSolution", "codeSnippets"
-];
+    // Check if the problem exists
+    const existingProblem = await prisma.problem.findUnique({
+      where: { id },
+    });
 
- const updateData = {}
+    if (!existingProblem) {
+      return res
+        .status(404)
+        .json(new apiError(404, "Problem not found"));
+    }
 
- for(const key of allowedFields)
-  if (key in req.body) {  // If the field is provided in the request
-    updateData[key] = req.body[key];  // Add it to the updateData object
+    // Delete the problem
+    await prisma.problem.delete({
+      where: { id },
+    });
+
+    return res
+      .status(200)
+      .json({ status: 200, message: "Problem deleted successfully!" });
+
+  } catch (error) {
+    return res
+      .status(500)
+      .json(new apiError(500, "Server error", error.message));
   }
- const updatedProblems = await prisma.problem.update({
-   where: { id},
-   data: updateData,
- });
-     return res.status(200).json(200,"problem update successfully!")
- 
- } catch (error) {
-  res.status(500).json(new apiError(500, "Server error",error.message));
-
- }
-
 });
-const getProblemById = asyncHandlers(async (req, res) => {
-      
-  const {id} = req.params;
-  
-    try {
-      const problemById = await db.problem.findUnique({
-        where:{
-          id
-        }
-  
-      })
-      if(!problemById){
-        return res.status(404).json(new apiError(404, "Something went wrong"));
-      }else{
-        return res.status(200).json(200,"message created successfully!")
-      }
-    } catch (error) {
 
-      console.error("Error in createProblem:", error);
-    return res.status(500).json(new apiError(500, "Something went wrong"));
-    }})
+const updateProblem = asyncHandlers(async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Step 1: Check if the problem exists
+    const existingProblem = await prisma.problem.findUnique({
+      where: { id },
+    });
+
+    if (!existingProblem) {
+      return res
+        .status(404)
+        .json(new apiError(404, "Problem not found"));
+    }
+
+    // Step 2: Define which fields are allowed to be updated
+    const allowedFields = [
+      "title",
+      "description",
+      "difficulty",
+      "tag",
+      "constraints",
+      "hints",
+      "testCases",
+      "examples",
+      "referenceSolution",
+      "codeSnippets",
+    ];
+
+    // Step 3: Filter out only the fields sent in the request body
+    const updateData = {};
+    for (const key of allowedFields) {
+      if (key in req.body) {
+        updateData[key] = req.body[key];
+      }
+    }
+
+    // Step 4: Perform the update
+    const updatedProblem = await prisma.problem.update({
+      where: { id },
+      data: updateData,
+    });
+
+    // Step 5: Send a success response
+    return res
+      .status(200)
+      .json(new apiResponseHandler(200, "Problem updated successfully!", updatedProblem));
+
+  } catch (error) {
+    console.error("Error updating problem:", error);
+    return res
+      .status(500)
+      .json(new apiError(500, "Server error", error.message));
+  }
+});
+
+const getProblemById = asyncHandlers(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const problemById = await db.problem.findUnique({
+      where: {
+        id
+      }
+    });
+
+    if (!problemById) {
+      return res.status(404).json(new apiError(404, "Problem not found"));
+    } else {
+      return res.status(200).json(new apiResponseHandler(200, "Problem retrieved successfully", problemById));
+    }
+  } catch (error) {
+    console.error("Error in getProblemById:", error);
+    return res.status(500).json(new apiError(500, "Internal server error"));
+  }
+});
+
     
   
 const getAllProblems = asyncHandlers(async (req, res) => {
@@ -180,7 +231,7 @@ const getAllProblems = asyncHandlers(async (req, res) => {
       } else {
         return res
           .status(200)
-          .json(new apiResponseHandler(200, "message created successfully!", problems));
+          .json(new apiResponseHandler(200, "problems gets successfully!", problems));
       
     }
   } catch (error) {
@@ -191,7 +242,10 @@ const getAllProblems = asyncHandlers(async (req, res) => {
   }
 });
 
-const getSolvedProblemByUser = asyncHandlers(async (req, res) => {});
+const getSolvedProblemByUser = asyncHandlers(async (req, res) => {
+
+
+});
 
 export {
   createProblem,
