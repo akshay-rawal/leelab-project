@@ -52,7 +52,11 @@ export const executeCode = asyncHandlers(async (req, res) => {
      if (error.response) {
        console.error("Response error data:", error.response.data);
      }
-     return res.status(500).json(new apiError(500, "Failed to execute code."));
-   }
+     return res.status(500).json(new apiError(
+      500,
+      "Failed to execute code.",
+      error.response?.data || error.message
+    ));
+       }
  });
  
