@@ -43,9 +43,26 @@ export const executeCode = asyncHandlers(async (req, res) => {
      console.log("Tokens received from Judge0:", token);
  
      // 4. Poll Judge0 for results of all submitted test-cases
-     const result = await pollBatchResults(token);
-     console.log("Result from Judge0:", result);
- 
+     const results = await pollBatchResults(token);
+
+     // analysis test case results
+
+     let allPassed = true;
+     const detailedResults = results.map((res,i )=>{
+      const stdout = res.stdout?.trim()
+      const expected_output = expected_outputs[i]?.trim();
+      const passed = stdout === expected_output;
+      console.log(`Testcase #${i+1}`);
+      console.log(`Input ${stdin[i]}`);
+      console.log(`Expected Output for tast case ${expected_output}`);
+      console.log(`Actual input ${stdout}`);
+      console.log(`Matched:${passed}`);
+      
+      
+      
+      
+     })
+    
      return res.status(201).json(new apiResponseHandler(200, "Code executed!"));
    } catch (error) {
      console.error("Error in submitBatch:", error.message);
