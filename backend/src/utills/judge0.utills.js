@@ -83,3 +83,16 @@ export const pollBatchResults = async (tokens) => {
     }
   }
 };
+
+export function getJudge0LanguageName(languageId) {
+  const languages = {
+    63: "JavaScript",
+    71: "Python",
+    62: "Java",
+    74: "TypeScript",
+    50: "C",
+    54: "C++",
+  };
+
+  return languages[languageId] || "Unknown";
+}

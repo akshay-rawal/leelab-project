@@ -3,7 +3,7 @@ import { asyncHandlers } from "../utills/asyncHandler.js";
 import { apiError } from "../utills/apiErrorHandler.js";
 import { apiResponseHandler } from "../utills/apiresponseHandler.js";
 import { pollBatchResults, submitBatch } from "../utills/judge0.utills.js";
-import axios from "axios";
+import { getJudge0LanguageName } from "../utills/judge0.utills.js";
 
 
 export const executeCode = asyncHandlers(async (req, res) => {
@@ -58,11 +58,87 @@ export const executeCode = asyncHandlers(async (req, res) => {
       console.log(`Actual input ${stdout}`);
       console.log(`Matched:${passed}`);
       
-      
+      if(!passed) allPassed = false
+
+      return{
+          testCaseIndex:i+1,
+          stdout:stdout,
+          expectedOutput:expected_output,
+          stderr:results.stderr || null,
+          compileOutput:results.compile_output || null,
+          status:results.status.description,
+          memory:results.memory ? `${results.memory} kb `: undefined,
+          time:results.time ? `${results.time} sec` : undefined
+          
+      }
       
       
      })
-    
+     console.log("detail results.....",detailedResults);
+
+     const submission = await db.submission.create({
+        data:{
+          userId,
+          problemId,
+          sourceCode:source_code,
+          language:getJudge0LanguageName(language_id),
+          stdin:stdin.join("\n"),
+          stdout:JSON.stringify(detailedResults.map((r)=>r.stdout)),
+          stderr:detailedResults.some((r)=>r.stderr) ? JSON.stringify(detailedResults.map((r)=>r.stderr)) : null,
+          compileOutput:detailedResults.some((r)=>r.compile_output) ? JSON.stringify(detailedResults.map((r)=>r.compile_output)) : null,
+          status:allPassed ? "Accepted":"Wrong Answer",
+          memory: detailedResults.some((r)=>r.memory) ? JSON.stringify(detailedResults.map((r)=>r.memory)) : null,
+          time:detailedResults.some((r)=>r.time) ? JSON.stringify(detailedResults.map((r)=>r.time)) : null,
+        }
+     })
+
+     if(allPassed){
+        await db.problemSolved.upsert({
+          where:{
+            userId_problemId:{
+              userId,problemId
+            }}, 
+            update:{},
+            create:{
+              userId,
+              problemId
+
+            },
+
+
+          }
+        )
+     }
+ 
+     //save individual tast case results using detailResults
+       const tasteCaseResults = detailedResults.map((result)=>({
+           submissionId:submission.id,
+           tasteCase:result.tasteCase,
+           passed:result.passed,
+           stdout:result.stdout,
+           expectedOutput:result.expected_output,
+           stderr:result.stderr,
+           compileOutput:result.compile_output,
+           status:result.status,
+           memory:result.memory,
+           time:result.time
+
+       }))
+
+        await db.TestCaseResult.createMany({
+          data:tasteCaseResults
+        })
+
+        const submittionTestCases = await db.submission.findUnique({
+       where:{
+        id:submission.id
+       },
+       include:{
+        testCases:true
+       }
+        })
+     
+     
      return res.status(201).json(new apiResponseHandler(200, "Code executed!"));
    } catch (error) {
      console.error("Error in submitBatch:", error.message);
