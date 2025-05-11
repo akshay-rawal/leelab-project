@@ -6,7 +6,7 @@ import { db } from "../libs/db";
 
 //  Create a new playlist
 const createPlaylist = asyncHandlers(async (req, res) => {
-  res.json({ message: "createPlaylist called" });
+     w
 });
 //   Get playlist by ID
 const getPlaylistDetails = asyncHandlers(async (req, res) => {
@@ -36,14 +36,12 @@ const deletePlaylist = asyncHandlers(async (req, res) => {
   res.json({ message: "deletePlaylist called" });
 });
 
-
-
-// Export all handlers
-module.exports = {
-  getAllLIstDetails,
+export {
+  getPlaylistDetails,
   getAllPlaylistIstDetails,
   createPlaylist,
   addProblemToPlaylist,
   deletePlaylist,
   problemDeleteFromPlaylist,
 };
+
