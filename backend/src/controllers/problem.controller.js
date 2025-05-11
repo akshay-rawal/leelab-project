@@ -243,9 +243,38 @@ const getAllProblems = asyncHandlers(async (req, res) => {
 });
 
 const getSolvedProblemByUser = asyncHandlers(async (req, res) => {
+  const problems = await db.problem.findMany({
+    where: {
+      solvedProblemByUser: {
+        some: {
+          userId: req.user.id
+        }
+      }
+    },
+    include: {
+      solvedProblemByUser: {
+        where: {
+          userId: req.user.id
+        }
+      }
+    }
+  });
 
+  // If no problems found for the current user
+  if (!problems || problems.length === 0) {
+    return res.status(404).json(
+      new apiError(404, "No solved problems found for the current user.")
+    );
+  }
 
+  // Success response
+  return res.status(200).json(
+    new apiResponseHandler(200, "Solved problems fetched successfully.", problems)
+  );
 });
+
+
+
 
 export {
   createProblem,

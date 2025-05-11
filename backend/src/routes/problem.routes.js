@@ -3,7 +3,7 @@
     import { verifyUser } from "../controllers/auth.controller.js"
     import { problemCreateValidator } from "../utills/validators/problemValidator.js"
     import { isAdmin } from "../controllers/isAdmin.js"
-    import { createProblem,getAllProblems,getSolvedProblemByUser,updateProblem,getProblemById,deleteProblem } from "../controllers/problem.controller.js"
+    import { createProblem,getAllProblems,updateProblem,getProblemById,deleteProblem,getSolvedProblemByUser } from "../controllers/problem.controller.js"
     const problemRoutes = express.Router()
 
 
