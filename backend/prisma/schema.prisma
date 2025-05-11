@@ -75,8 +75,8 @@ model Submission {
   stderr        String?
   stdin         String? // User input (stdin)
   stdout        String? // Judge0 output (stdout)
-  code          String // User code
   language      String
+  status        String?
   compileOutput String? //compleoutput ek object bhi ho skta hai
   compileStatus String? // Compilation status: 'success' or 'error'
   lastTriedAt   DateTime @default(now())
