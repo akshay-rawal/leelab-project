@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -14,81 +8,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
 model User {
-  id           String  @id @default(uuid())
-  name         String?
-  email        String  @unique
-  image        String?
-  role         Role    @default(USER)
-  password     String
-  refreshToken String?
-
-  problems   Problem[] // User created problems
-  submission Submission[]
-
+  id            String          @id @default(uuid())
+  name          String?
+  email         String          @unique
+  image         String?
+  role          Role            @default(USER)
+  password      String
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  refreshToken  String?
+  problems      Problem[]
   ProblemSolved ProblemSolved[]
+  submission    Submission[]
 }
 
 model Problem {
-  id                String     @id @default(uuid())
-  title             String
-  description       String
-  difficulty        Difficulty
-  constraints       String[]
-  examples          Json
-  testCases         Json
-  tag               String
-  codeSnippets      Json
-  hints             String[]
-  editorial         String?
-  referenceSolution Json
-
+  id                  String          @id @default(uuid())
+  title               String
+  description         String
+  difficulty          Difficulty
+  constraints         String[]
+  examples            Json
+  testCases           Json
+  tag                 String
+  codeSnippets        Json
+  hints               String[]
+  editorial           String?
   createdById         String
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  referenceSolution   Json
   createdBy           User            @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  submission          Submission[]
   solvedProblemByUser ProblemSolved[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-enum Difficulty {
-  EASY
-  MEDIUM
-  HARD
+  submission          Submission[]
 }
 
 model Submission {
-  id            String   @id @default(uuid())
+  id            String           @id @default(uuid())
   userId        String
   problemId     String
-  sourceCode    Json
-  attemptCount  Int      @default(1)
-  isSolved      Boolean  @default(false)
-  stderr        String?
-  stdin         String? // User input (stdin)
-  stdout        String? // Judge0 output (stdout)
-  language      String
-  status        String?
-  compileOutput String? //compleoutput ek object bhi ho skta hai
-  compileStatus String? // Compilation status: 'success' or 'error'
-  lastTriedAt   DateTime @default(now())
+  attemptCount  Int              @default(1)
+  isSolved      Boolean          @default(false)
+  stdin         String?
+  stdout        String?
+  compileOutput String?
+  compileStatus String?
+  lastTriedAt   DateTime         @default(now())
   memory        String?
   time          String?
-
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  problem   Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  testCases TestCaseResult[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  language      String
+  sourceCode    Json
+  status        String?
+  stderr        String?
+  problem       Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  testCases     TestCaseResult[]
 }
 
 model TestCaseResult {
@@ -103,9 +80,9 @@ model TestCaseResult {
   status         String
   memory         String?
   time           String?
-  Submission     Submission @relation(fields: [submissionId], references: [id])
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+  Submission     Submission @relation(fields: [submissionId], references: [id])
 
   @@index([submissionId])
 }
@@ -116,8 +93,19 @@ model ProblemSolved {
   problemId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, problemId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
 }
