@@ -1,7 +1,7 @@
-import { asyncHandlers } from "../utills/asyncHandler";
-import { apiError } from "../utills/apiErrorHandler";
-import { apiResponseHandler } from "../utills/apiresponseHandler";
-import { db } from "../libs/db";
+import { asyncHandlers } from "../utills/asyncHandler.js";
+import { apiError } from "../utills/apiErrorHandler.js";
+import { apiResponseHandler } from "../utills/apiresponseHandler.js";
+import { db } from "../libs/db.js";
 
 //  Create a new playlist
 const createPlaylist = asyncHandlers(async (req, res) => {
@@ -28,12 +28,11 @@ const createPlaylist = asyncHandlers(async (req, res) => {
     },
   });
 
-  return apiResponseHandler(
-    res,
+  return res.status(201).json(new apiResponseHandler(
     201,
     "Playlist created successfully",
     playlist
-  );
+  ));
 });
 //   Get playlist by ID
 const getPlaylistDetails = asyncHandlers(async (req, res) => {
@@ -77,7 +76,7 @@ const getAllPlaylistDetails = asyncHandlers(async (req, res) => {
 
     const playlists = await db.playlist.findMany({
       where: {
-        userId: userId,
+        createdById: userId,
       },
       include: {
         problemsInPlaylist: {
@@ -89,30 +88,34 @@ const getAllPlaylistDetails = asyncHandlers(async (req, res) => {
     });
 
     if (!playlists || playlists.length === 0) {
-      return apiResponseHandler(res, 404, "No playlists found.");
+      return res.status(404).json(new apiResponseHandler(404, "No playlists found."));
     }
 
-    return apiResponseHandler(
-      res,
+    return res.status(200).json(new apiResponseHandler(
       200,
       "All playlist details fetched successfully.",
       playlists
-    );
+    ));
   } catch (error) {
     console.error(error);
-    return apiResponseHandler(
-      res,
+    return res.status(500).json( new apiError(
       500,
       "Server error while fetching playlists."
-    );
+    ));
   }
 });
 
 // Add problem to a playlist
 const addProblemToPlaylist = asyncHandlers(async (req, res) => {
   const userId = req.user.id;
-  const { playlistId, problemId } = req.body;
-
+  console.log("userId.....",userId);
+  
+  const { problemId} = req.body;
+  const {playlistId} = req.params
+  console.log("problemId......",problemId);
+  console.log("playlistId....",playlistId);
+  
+  
   // Check required fields
   if (!playlistId || !problemId) {
     return res
@@ -124,12 +127,15 @@ const addProblemToPlaylist = asyncHandlers(async (req, res) => {
   const playlist = await db.playlist.findUnique({
     where: { id: playlistId },
   });
+  console.log("ye playlist hai",playlist
+  );
+  
 
   if (!playlist) {
     return new apiError(404, "Playlist not found").send(res);
   }
 
-  if (playlist.userId !== userId) {
+  if (playlist.createdById  !== userId) {
     return res
       .status(403)
       .json(
@@ -139,6 +145,7 @@ const addProblemToPlaylist = asyncHandlers(async (req, res) => {
         )
       );
   }
+  
 
   // Check if problem exists
   const problem = await db.problem.findUnique({
@@ -187,8 +194,8 @@ const addProblemToPlaylist = asyncHandlers(async (req, res) => {
 // Remove a problem from a playlist
 const problemDeleteFromPlaylist = asyncHandlers(async (req, res) => {
   const userId = req.user.id;
-  const { playlistId, problemId } = req.body;
-
+  
+ const {problemId} = req.params
   // Validate input
   if (!playlistId || !problemId) {
     return res
@@ -205,7 +212,7 @@ const problemDeleteFromPlaylist = asyncHandlers(async (req, res) => {
     return res.status(404).json(new apiError(404, "Playlist not found"));
   }
 
-  if (playlist.userId !== userId) {
+  if (playlist.createdById !== userId) {
     return res
       .status(403)
       .json(
@@ -252,10 +259,10 @@ const problemDeleteFromPlaylist = asyncHandlers(async (req, res) => {
 //  Delete a playlist
 const deletePlaylist = asyncHandlers(async (req, res) => {
   const userId = req.user.id;
-  const { playlistId } = req.body;
+  const { playlistId } = req.params;
 
   if (!playlistId) {
-    return res
+    return res  
       .status(400)
       .json(new apiError(400, "playlistId is required"));
   }
@@ -271,7 +278,7 @@ const deletePlaylist = asyncHandlers(async (req, res) => {
   }
 
   // Check user come in req its match
-  if (playlist.userId !== userId) {
+  if (playlist.createdById !== userId) {
     return res
       .status(403)
       .json(new apiError(403, "You are not authorized to delete this playlist"));
