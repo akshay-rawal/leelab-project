@@ -60,7 +60,7 @@ function reverseList(head) {
     const interval = setInterval(()=>{
       setActiveIndex((prev)=>(prev+1)%codeSnippet.length)
     },2000)
-           return clearInterval(interval)
+           return ()=>clearInterval(interval)
 
   },[codeSnippet.length])
 

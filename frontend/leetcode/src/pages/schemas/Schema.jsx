@@ -3,7 +3,7 @@ import {z}from "zod"
 
 
 
-export const SignupSchema = z.object({
+export const Schema = z.object({
   name: z
     .string()
     .min(2, { message: "Name must be at least 2 characters long" }),
@@ -19,4 +19,4 @@ export const SignupSchema = z.object({
   message: "Passwords do not match",
   path: ["confirmPassword"], // Error will show at confirmPassword field
 });
-export default SignupSchema
+export default Schema
