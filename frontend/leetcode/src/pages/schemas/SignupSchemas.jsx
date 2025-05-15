@@ -1,7 +1,7 @@
 import React from 'react'
 import {z}from "zod"
 
-import React from 'react'
+
 
 export const SignupSchema = z.object({
   name: z
