@@ -4,7 +4,7 @@ import {Code,Eye,EyeOff,Loader2,Lock,Mail} from "lucide-react"
 import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from 'react-router-dom';
-import AuthImagePattern from '../components/shared/AuthImagePattern';
+import AuthImagePattern from "../components/shared/AuthImagePattern"
 
 
 
