@@ -24,7 +24,7 @@ const { errors,isSubmitting  } = formState;
     try {
       // loading state के लिए React Hook Form खुद isSubmitting को manage करता है
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert("Signed in successfully!");
+      alert("Login successfully!");
       console.log(data);
     } catch (error) {
       console.error(error);
@@ -44,7 +44,7 @@ const { errors,isSubmitting  } = formState;
                 <Code className="w-6 h-6 text-primary" />
               </div>
               <h1 className="text-2xl font-bold mt-2">Welcome </h1>
-              <p className="text-base-content/60">Sign Up to your account</p>
+              <p className="text-base-content/60">Login your account</p>
             </div>
           </div>
 
@@ -120,7 +120,7 @@ const { errors,isSubmitting  } = formState;
                   Loading...
                 </>
               ) : (
-                "Sign in"
+                "login..."
               )}
             </button>
           </form>
