@@ -5,10 +5,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from 'react-router-dom';
 import AuthImagePattern from "../components/shared/AuthImagePattern"
+import { useAuthStore } from '../store/store';
 
 
 
-const Signup = () => {
+const SignupPage = () => {
+  const {signup,isSigninUp} = useAuthStore()
    const [showPassword,setShowPassword] = useState(false)
    const formMethods = useForm({
   resolver:zodResolver(Schema )
@@ -22,10 +24,9 @@ const { errors,isSubmitting  } = formState;
 
  const onSubmit = async (data) => {
     try {
-      // loading state के लिए React Hook Form खुद isSubmitting को manage करता है
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert("Signed in successfully!");
-      console.log(data);
+      await signup(data)  
+      console.log(("signup data.....",data));
+      
     } catch (error) {
       console.error(error);
     }
@@ -130,20 +131,38 @@ const { errors,isSubmitting  } = formState;
                 <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
               )}
             </div>
+            {/* Confirm Password */}
+<div className="form-control">
+  <label className="label">
+    <span className="label-text font-medium">Confirm Password</span>
+  </label>
+  <input
+    type="password"
+    {...register("confirmPassword")}
+    className={`input input-bordered w-full ${
+      errors.confirmPassword ? "input-error" : ""
+    }`}
+    placeholder="Confirm Password"
+  />
+  {errors.confirmPassword && (
+    <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+  )}
+</div>
+
 
             {/* Submit Button */}
             <button
               type="submit"
               className="btn btn-primary w-full"
-             disabled={formState.isSubmitting}
+             disabled={isSigninUp}
             >
-               {formState.isSubmitting ? (
+               {isSigninUp ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
                   Loading...
                 </>
               ) : (
-                "Sign in"
+                "Sign up"
               )}
             </button>
           </form>
@@ -173,4 +192,4 @@ const { errors,isSubmitting  } = formState;
 )}  
 
 
-export default Signup
+ export  default SignupPage;

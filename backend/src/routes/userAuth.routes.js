@@ -12,7 +12,7 @@ router.get("/check-user", verifyUser, (req, res) => {
     res.status(200).json({
       success: true,
       message: "User authenticated",
-      user: req.user.email,
+      user: req.user,
     });
   });
   

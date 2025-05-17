@@ -5,10 +5,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from 'react-router-dom';
 import AuthImagePattern from "../components/shared/AuthImagePattern"
+import { useAuthStore } from '../store/store';
 
 
 
-const Login = () => {
+const LoginPage = () => {
    const [showPassword,setShowPassword] = useState(false)
    const formMethods = useForm({
   resolver:zodResolver(Schema )
@@ -17,15 +18,13 @@ const Login = () => {
 const { register, handleSubmit, formState } = formMethods;
 const { errors,isSubmitting  } = formState;
 
+const {login,isLoggingIn} = useAuthStore()
 
 
 
  const onSubmit = async (data) => {
     try {
-      // loading state के लिए React Hook Form खुद isSubmitting को manage करता है
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert("Login successfully!");
-      console.log(data);
+      await login(data)      
     } catch (error) {
       console.error(error);
     }
@@ -112,9 +111,9 @@ const { errors,isSubmitting  } = formState;
             <button
               type="submit"
               className="btn btn-primary w-full"
-             disabled={formState.isSubmitting}
+             disabled={isLoggingIn}
             >
-               {formState.isSubmitting ? (
+               {isLoggingIn ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
                   Loading...
@@ -150,4 +149,4 @@ const { errors,isSubmitting  } = formState;
 )}  
 
 
-export default Login
+export default LoginPage
