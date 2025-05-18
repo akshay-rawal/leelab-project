@@ -2,7 +2,9 @@ import React from 'react'
 
 const AddProblem = () => {
   return (
-    <div>AddProblem</div>
+    <div>
+        <CreateProblemForm/>
+    </div>
   )
 }
 
