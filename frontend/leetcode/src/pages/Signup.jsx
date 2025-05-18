@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Schema from './schemas/Schema';
+import { Schema } from './schemas/Schema';
 import {Code,Eye,EyeOff,Loader2,Lock,Mail} from "lucide-react"
 import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";

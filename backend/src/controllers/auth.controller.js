@@ -135,6 +135,7 @@ const loginUser = asyncHandlers(async (req, res) => {
 const verifyUser = asyncHandlers(async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   console.log("Received Token:", token);
+console.log("ACCESS_JWT_SECRET Used:", process.env.ACCESS_JWT_SECRET);
 
 
   if (!token) {
@@ -143,6 +144,8 @@ const verifyUser = asyncHandlers(async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token,process.env.ACCESS_JWT_SECRET);
+    console.log("Access JWT Secret:", process.env.ACCESS_JWT_SECRET);
+
     console.log("Decoded Token:", decoded);
     const user = await db.user.findUnique({
       where: { id: decoded.id },

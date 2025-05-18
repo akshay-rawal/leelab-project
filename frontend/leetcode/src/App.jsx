@@ -9,16 +9,22 @@ import { Loader } from "lucide-react";
 
 const App = () => {
   const {authUser, isCheckingAuth,checkAuth} = useAuthStore()
-
   useEffect(() => {
-    if(isCheckingAuth && !authUser){
-     return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader className="size-10 animate-spin"></Loader>
-      </div>
+    const token = localStorage.getItem("token");
+    console.log("Token in localStorage:", localStorage.getItem("token"));
 
-     )}
-  }, [checkAuth])
+    if (token) {
+      checkAuth();
+    }
+  }, []);
+
+if (isCheckingAuth && !authUser) {
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <Loader className="size-10 animate-spin" />
+    </div>
+  );
+}
 
 
   return (

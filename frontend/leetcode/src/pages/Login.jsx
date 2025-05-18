@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import Schema from './schemas/Schema';
+import { useState } from 'react'
+import { LoginSchema } from './schemas/Schema';
 import {Code,Eye,EyeOff,Loader2,Lock,Mail} from "lucide-react"
 import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,23 +8,30 @@ import AuthImagePattern from "../components/shared/AuthImagePattern"
 import { useAuthStore } from '../store/store';
 
 
-
 const LoginPage = () => {
    const [showPassword,setShowPassword] = useState(false)
    const formMethods = useForm({
-  resolver:zodResolver(Schema )
+  resolver:zodResolver(LoginSchema ),
+  defaultValues: {
+    email: "",
+    password: ""
+  }
 })
 
 const { register, handleSubmit, formState } = formMethods;
 const { errors,isSubmitting  } = formState;
 
-const {login,isLoggingIn} = useAuthStore()
+const {login,isLogginIn } = useAuthStore()
 
 
 
  const onSubmit = async (data) => {
+    console.log("🚀 Form submitted", data); // <- This should show
+
     try {
-      await login(data)      
+      await login(data)     
+          console.log("✅ login() finished");
+ 
     } catch (error) {
       console.error(error);
     }
@@ -111,9 +118,9 @@ const {login,isLoggingIn} = useAuthStore()
             <button
               type="submit"
               className="btn btn-primary w-full"
-             disabled={isLoggingIn}
+             disabled={isLogginIn }
             >
-               {isLoggingIn ? (
+               {isLogginIn  ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
                   Loading...
