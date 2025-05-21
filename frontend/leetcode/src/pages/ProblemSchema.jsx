@@ -5,6 +5,7 @@ export const problemSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
   description: z.string().min(1, { message: "Description is required" }),
   difficulty: z.enum(["EASY", "MEDIUM", "HARD"]), // assuming enum values
+    tags: z.array(z.string().min(1, "Tag cannot be empty")), // ✅ ADD THIS
   constraints: z.array(z.string()),
 examples: z.object({
   PYTHON: z.object({

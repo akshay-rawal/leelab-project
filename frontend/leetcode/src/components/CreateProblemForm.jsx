@@ -79,7 +79,7 @@ const CreateProblemForm = () => {
     const loadSampleData=()=>{
     const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem
   
-   replaceTags(sampleData.tags.map((tag) => tag));
+replaceTags(sampleData?.tags?.map(tag => tag) || []);
     replacetestcases(sampleData.testcases.map((tc) => tc));
 
    // Reset the form with sample data 
