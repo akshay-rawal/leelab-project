@@ -445,80 +445,10 @@ public class Main {
   },
 };
 
-export const CreateProblemForm = () => {
-    const [sampleType , setSampleType] = useState("DP")
-    const navigation = useNavigate();
-    const {register , control , handleSubmit , reset , formState:{errors}} = useForm(
-        {
-            resolver:zodResolver(problemSchema),
-            defaultValues:{
-                 testcases: [{ input: "", output: "" }],
-      tags: [""],
-      examples: {
-        JAVASCRIPT: { input: "", output: "", explanation: "" },
-        PYTHON: { input: "", output: "", explanation: "" },
-        JAVA: { input: "", output: "", explanation: "" },
-      },
-      codeSnippets: {
-        JAVASCRIPT: "function solution() {\n  // Write your code here\n}",
-        PYTHON: "def solution():\n    # Write your code here\n    pass",
-        JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
-      },
-      referenceSolutions: {
-        JAVASCRIPT: "// Add your reference solution here",
-        PYTHON: "# Add your reference solution here",
-        JAVA: "// Add your reference solution here",
-      },
-            }
-        }
-    )
 
-  const {
-    fields: testCaseFields,
-    append: appendTestCase,
-    remove: removeTestCase,
-    replace: replacetestcases,
-  } = useFieldArray({
-    control,
-    name: "testcases",
-  });
+ 
 
-  const {
-    fields: tagFields,
-    append: appendTag,
-    remove: removeTag,
-    replace: replaceTags,
-  } = useFieldArray({
-    control,
-    name: "tags",
-  });
+ 
 
-  const [isLoading , setIsLoading] = useState(false);
 
-  const onSubmit = async (value)=>{
-   try {
-    setIsLoading(true)
-    const res = await axiosInstance.post("/problems/create-problem" , value)
-    console.log(res.data);
-    toast.success(res.data.message || "Problem Created successfully⚡");
-    navigation("/");
-
-   } catch (error) {
-    console.log(error);
-    toast.error("Error creating problem")
-   }
-   finally{
-      setIsLoading(false);
-   }
-  }
-
-  const loadSampleData=()=>{
-    const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem
-  
-   replaceTags(sampleData.tags.map((tag) => tag));
-    replacetestcases(sampleData.testcases.map((tc) => tc));
-
-   // Reset the form with sample data
-    reset(sampleData);
-}
 }

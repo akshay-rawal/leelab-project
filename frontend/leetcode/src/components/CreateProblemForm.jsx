@@ -8,11 +8,13 @@
 import toast from "react-hot-toast"
 import useNavigate from "react-router-dom"
 import { problemSchema } from '../pages/ProblemSchema'
-import { sampleStringProblem,sampledpData,CreateProblemForm} from '../data/SampleData'
+import { sampleStringProblem,sampledpData} from '../data/SampleData'
 
  
 const CreateProblemForm = () => {
     const [sampleType , setSampleType] = useState("DP")
+      const [isLoading , setIsLoading] = useState(false);
+
     const navigation = useNavigate();
     const {register , control , handleSubmit , reset , formState:{errors}} = useForm(
         {
@@ -38,6 +40,52 @@ const CreateProblemForm = () => {
             }
         }
     )
+     const onSubmit = async (value)=>{
+   try {
+    setIsLoading(true)
+    const res = await axiosInstance.post("/problems/create-problem" , value)
+    console.log(res.data);
+    toast.success(res.data.message || "Problem Created successfully⚡");
+    navigation("/");
+
+   } catch (error) {
+    console.log(error);
+    toast.error("Error creating problem")
+   }
+   finally{
+      setIsLoading(false);
+   }
+  }
+     const {
+    fields: testCaseFields,
+    append: appendTestCase,
+    remove: removeTestCase,
+    replace: replacetestcases,
+  } = useFieldArray({
+    control,
+    name: "testcases",
+  });
+
+  const {
+    fields: tagFields,
+    append: appendTag,
+    remove: removeTag,
+    replace: replaceTags,
+  } = useFieldArray({
+    control,
+    name: "tags",
+  });
+
+    const loadSampleData=()=>{
+    const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem
+  
+   replaceTags(sampleData.tags.map((tag) => tag));
+    replacetestcases(sampleData.testcases.map((tc) => tc));
+
+   // Reset the form with sample data 
+    reset(sampleData);
+}
+
 
    return (
     <div className='container mx-auto py-8 px-4 max-w-7xl'>
@@ -104,7 +152,7 @@ const CreateProblemForm = () => {
                   </label>
                 )}
               </div>
-
+              
               <div className="form-control md:col-span-2">
                 <label className="label">
                   <span className="label-text text-base md:text-lg font-semibold">
