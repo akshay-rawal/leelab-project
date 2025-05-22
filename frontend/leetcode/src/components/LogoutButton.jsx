@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/store";
 
 
 
-export const LogoutButton = (children)=>{
+export const LogoutButton = ({children})=>{
     const {logout} = useAuthStore()
 
 
