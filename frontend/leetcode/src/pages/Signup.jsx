@@ -6,10 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from 'react-router-dom';
 import AuthImagePattern from "../components/shared/AuthImagePattern"
 import { useAuthStore } from '../store/store';
+import { useNavigate } from 'react-router-dom';
+
 
 
 
 const SignupPage = () => {
+  const navigate = useNavigate();
+
   const {signup,isSigninUp} = useAuthStore()
    const [showPassword,setShowPassword] = useState(false)
    const formMethods = useForm({
@@ -24,8 +28,11 @@ const { errors,isSubmitting  } = formState;
 
  const onSubmit = async (data) => {
     try {
-      await signup(data)  
+     const user =  await signup(data)  
       console.log(("signup data.....",data));
+      if(user){
+        navigate("/")
+      }
       
     } catch (error) {
       console.error(error);

@@ -6,9 +6,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from 'react-router-dom';
 import AuthImagePattern from "../components/shared/AuthImagePattern"
 import { useAuthStore } from '../store/store';
+import { useNavigate } from 'react-router-dom';
 
 
 const LoginPage = () => {
+    const navigate = useNavigate();
+  
    const [showPassword,setShowPassword] = useState(false)
    const formMethods = useForm({
   resolver:zodResolver(LoginSchema ),
@@ -27,10 +30,15 @@ const {login,isLogginIn } = useAuthStore()
 
  const onSubmit = async (data) => {
     console.log("🚀 Form submitted", data); // <- This should show
+   
 
     try {
-      await login(data)     
+    const user = await login(data)     
           console.log("✅ login() finished");
+          if(user){
+            navigate("/")
+          }
+console.log("User returned from login:", user);
  
     } catch (error) {
       console.error(error);
