@@ -1,6 +1,6 @@
 
 import {User,Code,LogOut} from "lucide-react"
-import React from "react"
+import React, { useEffect } from "react"
 import { useAuthStore } from "../store/store"
 import { Link } from "react-router-dom"
 import { LogoutButton } from "./LogoutButton"
@@ -8,9 +8,16 @@ import { LogoutButton } from "./LogoutButton"
 
 export const Navbar = ()=>{
 
-    const {authUser} = useAuthStore()
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+  const authUser = useAuthStore((state) => state.authUser);
 
-    console.log("AUTH_USER",authUser)
+
+  
+  useEffect(()=>{
+    checkAuth();  
+  },[])
+
+
 
     return (
      <nav className="sticky top-0 z-50 w-full py-5">
