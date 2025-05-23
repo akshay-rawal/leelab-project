@@ -17,9 +17,9 @@ const CreateProblemForm = () => {
       const [isLoading , setIsLoading] = useState(false);
 
     const navigation = useNavigate();
-    const {register , control , handleSubmit , reset , formState:{errors}} = useForm(
+    const {register , control , handleSubmit , reset ,watch, formState:{errors}} = useForm(
         {
-            resolver:zodResolver(problemSchema),
+           // resolver:zodResolver(problemSchema),
             defaultValues:{
                  testcases: [{ input: "", output: "" }],
       tags: [""],
@@ -43,14 +43,15 @@ const CreateProblemForm = () => {
     )
      const onSubmit = async (value)=>{
    try {
+      console.log("Submitted", value);
     setIsLoading(true)
     const res = await axiosInstance.post("/problems/create-problem" , value)
-    console.log(res.data);
+        console.log("Server Response:", res.data);
     toast.success(res.data.message || "Problem Created successfully⚡");
     navigation("/");
 
    } catch (error) {
-    console.log(error);
+       console.error("Error in submission", error);
     toast.error("Error creating problem")
    }
    finally{
@@ -87,8 +88,10 @@ replaceTags(sampleData?.tags?.map(tag => tag) || []);
     reset(sampleData);
 }
 
+  
+console.log("this is error",errors);
 
-  try {
+  const tags = watch("tags") || [];
      return (
       <div className='container mx-auto py-8 px-4 max-w-7xl'>
     <div className="card bg-base-100 shadow-xl">
@@ -170,7 +173,7 @@ replaceTags(sampleData?.tags?.map(tag => tag) || []);
                     {...register("description")}
                     placeholder="Enter problem description"
                   />
-                  {errors.description && typeof errors.description.message === "string" (
+                  {errors.description && typeof errors.description.message === "string" && (
                     <label className="label">
                       <span className="label-text-alt text-error">
                         {errors.description.message}
@@ -178,7 +181,7 @@ replaceTags(sampleData?.tags?.map(tag => tag) || []);
                     </label>
                   )}
                 </div>
-  
+                  
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text text-base md:text-lg font-semibold">
@@ -204,7 +207,7 @@ replaceTags(sampleData?.tags?.map(tag => tag) || []);
               </div>
   
               {/* Tags */}
-              <div className="card bg-base-200 p-4 md:p-6 shadow-md">
+              {/* <div className="card bg-base-200 p-4 md:p-6 shadow-md">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg md:text-xl font-semibold flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
@@ -246,8 +249,72 @@ replaceTags(sampleData?.tags?.map(tag => tag) || []);
                     </span>
                   </div>
                 )}
-              </div>
-  
+              </div>  */}
+                <div className="card bg-base-200 p-4 md:p-6 shadow-md">
+              <Controller
+                control={control}
+                name="tags"
+                render={({ field: { value, onChange } }) => (
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg md:text-xl font-semibold flex items-center gap-2">
+                        <BookOpen className="w-5 h-5" />
+                        Tags
+                      </h3>
+
+                      <button
+                        type="button"
+                        className="bg-brand hover:bg-brand/80 btn-sm text-white"
+                        onClick={() => onChange([...value, ""])}
+                      >
+                        <Plus className="w-4 h-4 mr-1" /> Add Tags
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {value.map((tag, index) => (
+                        <div
+                          key={index}
+                          className="flex gap-2 items-center flex-wrap"
+                        >
+                          <input
+                            value={tag}
+                            {...register(`tags.${index}`)}
+                            className="input input-bordered "
+                            placeholder="Enter tag"
+                            onChange={(e) => {
+                              const newTags = [...value];
+                              newTags[index] = e.target.value;
+                              onChange(newTags);
+                            }}
+                          />
+
+                          <button
+                            type="button"
+                            disabled={tags.length === 1}
+                            className="btn btn-ghost btn-square btn-sm"
+                            onClick={() => {
+                              const newTags = value.filter(
+                                (_, i) => i !== index
+                              );
+                              onChange(newTags);
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4 text-error" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              />
+              {errors.tags && (
+                <div className="mt-2">
+                  <span className="text-error text-sm">
+                    {errors.tags.message}
+                  </span>
+                </div>
+              )}
+            </div>
               {/* Test Cases */}
               <div className="card bg-base-200 p-4 md:p-6 shadow-md">
                 <div className="flex items-center justify-between mb-6">
@@ -562,10 +629,7 @@ replaceTags(sampleData?.tags?.map(tag => tag) || []);
         </div>
       </div>
     )
-  } catch (e) {
-  console.error("JSX Render Error:", e);
-  return <div>Error rendering component</div>;
-}}
+  }
 
 
  export default CreateProblemForm;
