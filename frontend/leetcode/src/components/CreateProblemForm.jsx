@@ -9,6 +9,7 @@ import toast from "react-hot-toast"
 import {useNavigate} from "react-router-dom"
 import { problemSchema } from '../pages/ProblemSchema'
 import { sampleStringProblem,sampledpData} from '../data/SampleData'
+import { useState  } from 'react'
 
  
 const CreateProblemForm = () => {
@@ -148,16 +149,13 @@ replaceTags(sampleData?.tags?.map(tag => tag) || []);
                   />
                   {errors.title && (
                     
-                    <>
-                        {console.log("Title Error =>", errors.title)}
-
                     <label className="label">
                       <span className="label-text-alt text-error">
-                            {typeof errors.title.message === "string" ? errors.title.message : "Error"}
+                              {errors.title.message}
 
                       </span>
                     </label>
-                    </>
+                  
                   )}
                 </div>
                 

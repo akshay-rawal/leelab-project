@@ -8,7 +8,7 @@
 
 
 
-    problemRoutes.post("/create-problem",verifyUser,isAdmin,createProblem,problemCreateValidator(),) //done
+    problemRoutes.post("/create-problem",verifyUser,isAdmin,problemCreateValidator(),createProblem) //done
     problemRoutes.patch("/update-problem/:id",verifyUser,isAdmin,updateProblem) //done
     problemRoutes.delete("/problem-delete/:id",verifyUser,isAdmin,deleteProblem)  //done
     problemRoutes.get("/getAll-problems",verifyUser,getAllProblems)   //done
