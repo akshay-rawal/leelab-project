@@ -19,7 +19,7 @@ const CreateProblemForm = () => {
     const navigation = useNavigate();
     const {register , control , handleSubmit , reset ,watch, formState:{errors}} = useForm(
         {
-           // resolver:zodResolver(problemSchema),
+          resolver:zodResolver(problemSchema),
             defaultValues:{
                  testcases: [{ input: "", output: "" }],
       tags: [""],
@@ -33,7 +33,7 @@ const CreateProblemForm = () => {
         PYTHON: "def solution():\n    # Write your code here\n    pass",
         JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
       },
-      referenceSolutions: {
+      referenceSolution: {
         JAVASCRIPT: "// Add your reference solution here",
         PYTHON: "# Add your reference solution here",
         JAVA: "// Add your reference solution here",
@@ -359,11 +359,11 @@ console.log("this is error",errors);
                               {...register(`testcases.${index}.input`)}
                               placeholder="Enter test case input"
                             />
-                            {errors.testCases?.[index]?.input && (
+                            {errors.testcases?.[index]?.input && (
                               <label className="label">
                                 <span className="label-text-alt text-error">
-                                  {errors.testCases[index].input.message}
-                                  {console.log("testcase input error:", errors.testCases?.[index]?.input)}
+                                  {errors.testcases[index].input.message}
+                                  {console.log("testcase input error:", errors.testcases?.[index]?.input)}
 
                                 </span>
                               </label>
@@ -380,10 +380,10 @@ console.log("this is error",errors);
                               {...register(`testcases.${index}.output`)}
                               placeholder="Enter expected output"
                             />
-                            {errors.testCases?.[index]?.output && (
+                            {errors.testcases?.[index]?.output && (
                               <label className="label">
                                 <span className="label-text-alt text-error">
-                                  {errors.testCases[index].output.message}
+                                  {errors.testcases[index].output.message}
                                 </span>
                               </label>
                             )}
@@ -393,10 +393,10 @@ console.log("this is error",errors);
                     </div>
                   ))}
                 </div>
-                {errors.testCases && !Array.isArray(errors.testCases) && (
+                {errors.testcases && !Array.isArray(errors.testcases) && (
                   <div className="mt-2">
                     <span className="text-error text-sm">
-                      {errors.testCases.message}
+                      {errors.testcases.message}
                     </span>
                   </div>
                 )}
@@ -463,7 +463,7 @@ console.log("this is error",errors);
                           </h4>
                           <div className="border rounded-md overflow-hidden">
                             <Controller
-                              name={`referenceSolutions.${language}`}
+                              name={`referenceSolution.${language}`}
                               control={control}
                               render={({ field }) => (
                                 <Editor

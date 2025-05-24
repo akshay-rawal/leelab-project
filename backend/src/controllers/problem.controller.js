@@ -5,17 +5,17 @@ import { db } from "../libs/db.js";
 import { getJudge0LanguageId } from "../utills/judge0.utills.js";
 import { submitBatch } from "../utills/judge0.utills.js";
 import { pollBatchResults } from "../utills/judge0.utills.js";
-import axios from "axios";
+import { normalizeConstraints } from "../utills/constraints.js";
 
 const createProblem = asyncHandlers(async (req, res) => {
   const {
     title,
     description,
     difficulty,
-    tag,
+    tags,
     constraints,
     hints,
-    testCases,
+    testcases,
     examples,
     referenceSolution,
     codeSnippets,
@@ -28,6 +28,7 @@ const createProblem = asyncHandlers(async (req, res) => {
       .status(403)
       .json(new apiError(403, "You're not authorized to create problems!"));
   }
+    
 
   // Validate required fields
   if (
@@ -35,16 +36,18 @@ const createProblem = asyncHandlers(async (req, res) => {
     !description ||
     !difficulty ||
     !referenceSolution ||
-    !testCases
+    !testcases
   ) {
     return res.status(400).json(new apiError(400, "Missing required fields"));
   }
 
-  if (!Array.isArray(testCases) || testCases.length === 0) {
+  if (!Array.isArray(testcases) || testcases.length === 0) {
     return res
       .status(400)
       .json(new apiError(400, "Test cases must be a non-empty array"));
   }
+
+           const normalizedConstraints = normalizeConstraints(constraints);
 
   try {
     for (const [language, solutionCode] of Object.entries(
@@ -58,7 +61,7 @@ const createProblem = asyncHandlers(async (req, res) => {
           .json(new apiError(400, `Language ${language} not supported.`));
       }
 
-      const submission = testCases.map(({ input, output }) => ({
+      const submission = testcases.map(({ input, output }) => ({
         source_code: solutionCode,
         stdin: input,
         expected_output: output,
@@ -90,13 +93,13 @@ const createProblem = asyncHandlers(async (req, res) => {
         title,
         description,
         difficulty,
-        tag,
-        constraints,
+        tags,
+        constraints:normalizedConstraints,
         hints,
         examples,
         referenceSolution,
         codeSnippets,
-        testCases,
+        testcases,
         createdBy: {
           connect: {
             id: req.user.id,

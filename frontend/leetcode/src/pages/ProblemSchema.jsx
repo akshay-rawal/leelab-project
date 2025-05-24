@@ -25,14 +25,13 @@ examples: z.object({
   }),
 }),
 
-  testCases: z.array(
+  testcases: z.array(
   z.object({
     input: z.string().min(1, { message: "Input is required" }),
     output: z.string().min(1, { message: "Output is required" }),
   })
 ),
 
-  tag: z.string().min(1, { message: "Tag is required" }),
   codeSnippets: z.object({
   PYTHON: z.string().min(1, { message: "Python code is required" }),
   JAVASCRIPT: z.string().min(1, { message: "JavaScript code is required" }),

@@ -107,7 +107,7 @@ class Main {
   }
 }`,
   },
-  referenceSolutions: {
+  referenceSolution: {
     JAVASCRIPT: `/**
 * @param {number} n
 * @return {number}
@@ -352,7 +352,7 @@ public class Main {
 }
 `,
   },
-  referenceSolutions: {
+  referenceSolution: {
     JAVASCRIPT: `/**
    * @param {string} s
    * @return {boolean}
