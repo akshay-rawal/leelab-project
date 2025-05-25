@@ -64,12 +64,12 @@ function reverseList(head) {
   }, [codeSnippet.length]);
 
  return (
-  <div className="hidden lg:flex flex-col items-center justify-center bg-slate-900 text-white p-12 relative overflow-hidden">
+<div className="hidden lg:flex flex-col items-center justify-center text-white p-12 relative overflow-hidden">
     {/* Removed background animated code symbols */}
 
     <div className="z-10 max-w-md flex flex-col items-center">
       {/* Code editor mockup */}
-      <div className="w-full bg-slate-800 rounded-lg shadow-xl mb-8 overflow-hidden">
+<div className="w-full bg-transparent rounded-lg shadow-xl mb-8 overflow-hidden border border-white/10">
         {/* editor's header */}
         <div className="bg-slate-700 px-4 py-2 flex items-center">
           <div className="flex space-x-2 mr-4">

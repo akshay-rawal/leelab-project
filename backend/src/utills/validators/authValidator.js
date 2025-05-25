@@ -9,21 +9,32 @@ const userregisterValidator = () => [
     .isEmail()
     .withMessage("Invalid email format"),
 
-  body("username")
+  body("name")
     .trim()
     .notEmpty()
-    .withMessage("Username is required")
-    .isAlphanumeric()
-    .withMessage("Username must contain only letters and numbers")
+    .withMessage("name is required")
+     .matches(/^[a-zA-Z0-9 ]+$/)
+    .withMessage("name must contain only letters and numbers")
     .isLength({ min: 3, max: 20 })
-    .withMessage("Username must be between 3 to 20 characters"),
+    .withMessage("name must be between 3 to 20 characters"),
 
   body("password")
     .trim()
     .notEmpty()
     .withMessage("Password is required")
-    .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long"),
+   // In userregisterValidator
+.isLength({ min: 8 }).withMessage("Password must be at least 8 characters long"),
+body("confirmPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("Confirm password is required")
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Passwords do not match");
+      }
+      return true;
+    }),
+
 ];
 
 const userLoginValidator = () => [

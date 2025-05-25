@@ -2,8 +2,13 @@
 import { validationResult } from "express-validator";
 
 export const validate = (req, res, next) => {
+  console.log("🟡 PATH:", req.path);
+  console.log("🟡 METHOD:", req.method);
+  console.log("🟡 BODY:", req.body);
+
   const errors = validationResult(req);
   console.log("error hai yeh:", errors);
+  
 
   if (errors.isEmpty()) {
     return next();

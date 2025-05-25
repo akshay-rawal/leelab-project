@@ -3,7 +3,6 @@ import express from "express"
 import { registerUser,loginUser,logoutUser,verifyUser } from "../controllers/auth.controller.js"
 import { userregisterValidator,userLoginValidator} from "../utills/validators/authValidator.js"
 import { validate } from "../middleware/checkValidator.js"
-
 const router = express.Router()
 
 

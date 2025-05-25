@@ -14,51 +14,60 @@ import {
 
 
 // Register User
-const registerUser = asyncHandlers(async (req, res) => {
-  const { name, email, password,role } = req.body;
+const registerUser = async (req, res) => {
+  try {
+    console.log("🟢 Reached registerUser");
+    console.log("📦 Data:", req.body);
 
-  if (!name || !email || !password) {
-    return res.status(400).json(new apiError(400, "All fields are required"));
-  }
+const { name, email, password, confirmPassword,role } = req.body;
+if(password !== confirmPassword) {
+  return res.status(400).json({ success: false, message: "Passwords do not match" });
+}
 
-  // Check if user already exists
-  const existingUser = await db.user.findUnique({ where: { email } });
+    if (!name || !email || !password) {
+      return res.status(400).json(new apiError(400, "All fields are required"));
+    }
 
-  if (existingUser) {
-    return res.status(400).json(new apiError(400, "Email is already in use"));
-  }
+    const existingUser = await db.user.findUnique({ where: { email } });
 
-  // Hash password
-  const hashedPassword = await hashPassword(password);
+    if (existingUser) {
+      return res.status(400).json(new apiError(400, "Email is already in use"));
+    }
 
-  // Create user
-  const user = await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-      role: role || UserRole.USER     }
-  });
+    const hashedPassword = await hashPassword(password);
 
-  console.log("data kyu nahi aa rha hai",user);
-  
-
-  const accessToken = generateAccessToken(user);
-  const refreshToken = generateRefreshToken(user);
-
-  return res.status(200).json(
-    new apiResponseHandler(200, "User registered successfully", {
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role:  user.role
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        role: role || UserRole.USER,
       },
-      accessToken,
-      refreshToken
-    })
-  );
-});
+    });
+
+    console.log("Created user:", user);
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    return res.status(200).json(
+      new apiResponseHandler(200, "User registered successfully", {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+        accessToken,
+        refreshToken,
+      })
+    );
+  } catch (error) {
+    console.error("❌ Error in registerUser:", error);
+    return res.status(500).json(new apiError(500, "Internal server error"));
+  }
+};
+
 
 // Login User
 const loginUser = asyncHandlers(async (req, res) => {

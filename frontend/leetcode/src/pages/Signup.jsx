@@ -21,7 +21,6 @@ import { useAuthStore } from "../store/store";
 import AuthImagePattern from "../components/shared/AuthImagePattern";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import GoogleLoginButton from "../components/GoogleButton"
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -52,8 +51,8 @@ const SignupPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#005AA7] to-[#FFFDE4] text-black">
-      <Particles
+<div className="h-screen overflow-hidden bg-gradient-to-br from-[#005AA7] to-[#FFFDE4]">      
+  <Particles
         id="tsparticles"
         init={particlesInit}
         options={{
@@ -88,9 +87,9 @@ const SignupPage = () => {
         className="absolute inset-0 z-0"
       />
 
-      <div className="relative z-10 min-h-screen grid lg:grid-cols-2 overflow-auto">
-        {/* Left Form Side */}
-        <div className="flex flex-col items-center justify-start p-6 sm:p-12 overflow-auto">
+<div className="relative z-10 h-full grid lg:grid-cols-2">
+          {/* Left Form Side */}
+<div className="flex flex-col items-center justify-start p-6 sm:p-12 overflow-auto h-full bg-slate-900">
           <div className="w-full max-w-md space-y-8">
             <div className="text-center mb-8">
               <div className="flex flex-col items-center gap-2 group">
@@ -272,12 +271,7 @@ const SignupPage = () => {
                 </Link>
               </p>
             </div>
-             <div className="space-y-4">
-      {/* Your form code here */}
-      <hr className="my-6 border-gray-300" />
-      <div className="text-center text-sm text-gray-500">Or sign in with</div>
-      <GoogleLoginButton />
-    </div>
+          
           </div>
         </div>
 
