@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { loadFull } from "tsparticles";
 import Particles from "react-tsparticles";
+import TypingHeading from "@/libs/typingHeading";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -79,16 +80,13 @@ const LoginPage = () => {
         className="absolute inset-0 z-0"
       />
       {/* Main Content */}
-      <div className="relative z-10 h-full grid lg:grid-cols-2">
+      <div className="relative z-10 min-h-screen grid lg:grid-cols-2 overflow-auto">
         <div className="flex flex-col justify-center items-center p-6 sm:p-12">
           <div className="w-full max-w-md space-y-8">
             <div className="text-center mb-8 text-white">
               <div className="flex flex-col items-center gap-2 group">
-                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                  <Code className="w-6 h-6 text-white" />
-                </div>
-                <h1 className="text-2xl font-bold mt-2">Welcome to MyCode</h1>
-                <p className="opacity-90">Login your account</p>
+                <TypingHeading />
+                <p className="opacity-90 relative top-5">Login your account</p>
               </div>
             </div>
 
@@ -146,6 +144,8 @@ const LoginPage = () => {
                     aria-label={
                       showPassword ? "Hide password" : "Show password"
                     }
+                    variant="ghost"
+                    size="icon"
                   >
                     {showPassword ? (
                       <EyeOff className="h-6 w-6" />
@@ -182,7 +182,7 @@ const LoginPage = () => {
                 Don't have an account?{" "}
                 <Link
                   to="/sign-up"
-                  className="text-white underline hover:text-blue-200"
+                  className="text-blue-400 hover:underline font-semibold"
                 >
                   Sign up
                 </Link>
