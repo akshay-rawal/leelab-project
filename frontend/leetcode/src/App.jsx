@@ -9,7 +9,6 @@ import { Loader } from "lucide-react";
 import Layout from "./layout/Layout";
 import AdminPanel from "./components/AdminPanel";
 import AddProblem from "./pages/AddProblem";
-
 const App = () => {
   const {authUser, isCheckingAuth,checkAuth} = useAuthStore()
   useEffect(() => {

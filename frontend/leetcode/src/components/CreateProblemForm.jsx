@@ -1,4 +1,4 @@
- import React from 'react'
+
  import {Controller,useFieldArray,useForm} from "react-hook-form"
  import {zodResolver} from "@hookform/resolvers/zod"  
  import {z} from "zod"
@@ -43,6 +43,7 @@ const CreateProblemForm = () => {
     )
      const onSubmit = async (value)=>{
    try {
+    
       console.log("Submitted", value);
     setIsLoading(true)
     const res = await axiosInstance.post("/problems/create-problem" , value)
@@ -89,7 +90,6 @@ replaceTags(sampleData?.tags?.map(tag => tag) || []);
 }
 
   
-console.log("this is error",errors);
 
   const tags = watch("tags") || [];
      return (
@@ -207,7 +207,7 @@ console.log("this is error",errors);
               </div>
   
               {/* Tags */}
-              {/* <div className="card bg-base-200 p-4 md:p-6 shadow-md">
+              <div className="card bg-base-200 p-4 md:p-6 shadow-md">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg md:text-xl font-semibold flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
@@ -249,8 +249,8 @@ console.log("this is error",errors);
                     </span>
                   </div>
                 )}
-              </div>  */}
-                <div className="card bg-base-200 p-4 md:p-6 shadow-md">
+              </div> 
+                {/* <div className="card bg-base-200 p-4 md:p-6 shadow-md">
               <Controller
                 control={control}
                 name="tags"
@@ -314,7 +314,7 @@ console.log("this is error",errors);
                   </span>
                 </div>
               )}
-            </div>
+            </div> */}
               {/* Test Cases */}
               <div className="card bg-base-200 p-4 md:p-6 shadow-md">
                 <div className="flex items-center justify-between mb-6">
