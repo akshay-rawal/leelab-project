@@ -3,6 +3,8 @@ import React from "react";
 import { useAuthStore } from "@/store/store";
 import { Link } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Input } from "./ui/input";
+
 import {
   Bookmark,
   PencilIcon,
@@ -16,10 +18,10 @@ import {
 const ProblemTable = ({ problems }) => {
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
-  const [selectedTag, setSelectedTag] = useState("");
+  const [selectedTag, setSelectedTag] = useState("ALL");
   const Diffculties = ["EASY", "MEDIUM", "HARD"];
-  const [items, setItems] = useState(problems.slice(0, 20));
-  
+  const [items, setItems] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(20); // how many to show initially
   const authUser = useAuthStore((state) => state.authUser);
 
   const allTags = useMemo(() => {
@@ -36,37 +38,23 @@ const ProblemTable = ({ problems }) => {
   }, [problems]);
 
 
-  const filterdSearch = useMemo(()=>{
+  const filterdProblems = useMemo(()=>{
           return (problems || [])
-          .filter((problem)=>problem.title.toLowerCase().includes(search.toLowerCase))
+          .filter((problem)=>problem.title.toLowerCase().includes(search.toLowerCase()))
           .filter((problem)=>difficulty === "ALL"?true:problem.difficulty === difficulty)
           .filter((problem)=>selectedTag==="ALL"?true:problem.tags?.includes(selectedTag))
   },[selectedTag,search,difficulty])
+   
+  useEffect(()=>{
+    setItems(filterdProblems.slice(0,visibleCount))
+  },[filterdProblems,visibleCount])
 
-
+  const fetchMoreData = ()=>{
+       setTimeout(()=>{
+        setVisibleCount((prev)=>prev+20)
+       },500)
+  }
  
-
-
-  const fetchMoreData = async() => {
-  setTimeout(() => {
-    const more =  problems.slice(items.length, items.length + 20);
-    setItems(prev => [...prev, ...more]);
-  }, 1500);
-};
-
- <InfiniteScroll
-      dataLength={items.length}
-      next={fetchMoreData}
-      hasMore={items.length < problems.length}
-      loader={<h4>Loading...</h4>}
-    >
-      {items.map((problem, index) => (
-        <div key={index}>
-          <h3>{problem.title}</h3>
-          <p>{problem.difficulty}</p>
-        </div>
-      ))}
-    </InfiniteScroll>
 
 
   return (
@@ -79,10 +67,10 @@ const ProblemTable = ({ problems }) => {
         </button>
       </div>
       <div className="flex flex-wrap justfiy-between items-center mb-6 gap-4">
-        <input
+        <Input
           type="text"
           placeholder="search by title"
-          className="input input-bordered w-full md:w-1/3 bg-base-200"
+          className="Input Input-bordered w-full md:w-1/3 bg-base-200"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -94,7 +82,7 @@ const ProblemTable = ({ problems }) => {
         >
           <option value="ALL">All Diffculties</option>
           {Diffculties.map((diff) => (
-            <option Key={diff} value={diff}>
+            <option key={diff} value={diff}>
               {diff[0].toUpperCase() + diff.slice(1).toLowerCase()}
             </option>
           ))}
@@ -107,32 +95,47 @@ const ProblemTable = ({ problems }) => {
           ))}
         </select>
       </div>
-        <div className="overflow-x-auto rounded-xl shadow-md">
+
+     {/* ininite scroll loop */}
+
+       <div className="overflow-x-auto">
+        <InfiniteScroll
+         dataLength={items.length}
+         next={fetchMoreData}
+         hasMore={items.length < filterdProblems.length}
+         loader={<h4 className="text-center my-4 ">Loading more problem...</h4>}
+         scrollableTarget="scroll"
+        >
+    
+
+        {/* <div className="overflow-x-auto rounded-xl shadow-md"> */}
         <table className="table table-zebra table-lg bg-base-200 text-base-content">
         <thead className="bg-base-200">
+          <tr>
         <th>Solved</th>
         <th>Title</th>
         <th>Tags</th>
         <th>Difficulty</th>
         <th>Actions</th>
+        </tr>
         </thead>
         <tbody>
-           <InfiniteScroll
-      dataLength={items.length}
-      next={fetchMoreData}
-      hasMore={items.length < problems.length}
-      loader={<h4>Loading...</h4>}
-    >
-      {items.map((problem, index) => (
-        <div key={index}>
-          <h3>{problem.title}</h3>
-          <p>{problem.difficulty}</p>
-        </div>
-      ))}
-    </InfiniteScroll>
-        </tbody>
+              {items.map((problem, index) => (
+                <tr key={problem.id || index}>
+                  <td>{problem.solved ? "✅" : "❌"}</td>
+                  <td>{problem.title}</td>
+                  <td>{problem.tags?.join(", ")}</td>
+                  <td>{problem.difficulty}</td>
+                  <td>
+                    {/* Add edit/view/delete buttons if needed */}
+                    <button className="btn btn-sm btn-outline">View</button>
+                  </td>
+                    </tr>
+              ))}
+            </tbody>
         </table>
-        
+                </InfiniteScroll>
+
         </div>
     </div>
   
