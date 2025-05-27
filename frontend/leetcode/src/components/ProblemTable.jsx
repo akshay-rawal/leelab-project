@@ -10,7 +10,15 @@ const ProblemTable = ({problems}) => {
 
     const allTags = useMemo(()=>{
         if(!Array.isArray(problems)) return []
-    })
+   
+
+    const tagSet = new Set()
+
+    problems.forEach(element => element.tags?.forEach((tag)=>tagSet.add(tag))    
+);
+     
+     return Array.from(tagSet)
+ },[problems])
 
     const [search,setSearch] = useState("")
   const [difficulty,setDifficulty] = useState("ALL")
