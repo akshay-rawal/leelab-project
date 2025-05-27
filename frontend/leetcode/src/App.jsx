@@ -13,7 +13,6 @@ const App = () => {
   const {authUser, isCheckingAuth,checkAuth} = useAuthStore()
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("Token in localStorage:", localStorage.getItem("token"));
 
     if (token) {
       checkAuth();

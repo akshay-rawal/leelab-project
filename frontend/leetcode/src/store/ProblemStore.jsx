@@ -3,7 +3,7 @@
 import {toast} from "react-hot-toast"
 
 
-export const UseProblemStore = create((set)=>({
+ const UseProblemStore = create((set)=>({
    allProblems:[],
    singleProblem:null,
    allProblemLoading:false,
@@ -48,7 +48,7 @@ getAllProblem: async () => {
     const allProblem = await axiosInstance.get("/problems/getAll-problems"  );
     console.log("✅ All Problems:", allProblem);
 
-    set({ allProblem: allProblem.data.problems, allProblemLoading: false });
+    set({ allProblem: allProblem.data.data, allProblemLoading: false });
   } catch (error) {
     console.error("❌ Error fetching all problems:", error.message);
     toast.error("Unable to fetch all problems. Please try again.");
@@ -57,3 +57,5 @@ getAllProblem: async () => {
 } 
 
 })) 
+
+export default UseProblemStore;

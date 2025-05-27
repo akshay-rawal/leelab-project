@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { UseProblemStore } from "@/store/ProblemStore";
+import UseProblemStore from "@/store/ProblemStore";
 import { Loader } from "lucide-react";
 import ProblemTable from "@/components/ProblemTable";
 const Home = () => {
@@ -10,7 +10,7 @@ const Home = () => {
     getAllProblem();
   }, [getAllProblem]);
 
-  console.log("problems...", allProblems);
+console.log("✅ All Problems:", allProblems);
   if(allProblemLoading){
     return(
       <div className="flex items-center justify-center h-screen">
@@ -19,7 +19,6 @@ const Home = () => {
     )
   }
 
-  if (isPro)
     return (
       <div className="min-h-screen flex flex-col items-center mt-14 px-4 ">
         <div className="absolute top-16 left-0 w-1/3 bg-primary opacity-30 blur-3xl rounded-md bottom-9"></div>

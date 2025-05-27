@@ -13,10 +13,8 @@ export const useAuthStore = create((set) => ({
 
     try {
       const res = await axiosInstance.get("users/check-user");
-      console.log("check auth------", res.data);
       set({ authUser: res.data.user });
     } catch (error) {
-      console.log("❌ Error checking auth", error);
       set({ authUser: null });
     } finally {
       set({ isCheckingAuth: false });
@@ -29,7 +27,6 @@ export const useAuthStore = create((set) => ({
       const { accessToken, user } = res.data.data;
       if (accessToken) {
         localStorage.setItem("token", accessToken);
-        console.log("✅ Token stored in localStorage");
       }
 
       if (user) {
@@ -38,7 +35,6 @@ export const useAuthStore = create((set) => ({
       }
       return user;
     } catch (error) {
-      console.log("Error signing up", error);
       toast.error("Error signing up");
     } finally {
       set({ isSigninUp: false });
@@ -54,7 +50,6 @@ export const useAuthStore = create((set) => ({
       const { accessToken, user } = res.data.data;
       if (accessToken) {
         localStorage.setItem("token", accessToken);
-        console.log("✅ Token stored in localStorage");
       }
 
       if (user) {
@@ -64,7 +59,6 @@ export const useAuthStore = create((set) => ({
 
       return user;
     } catch (error) {
-      console.log("user:", res.data.user);
       toast.error("Error logging in");
     } finally {
       set({ isLogginIn: false });
