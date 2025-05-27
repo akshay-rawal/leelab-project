@@ -4,6 +4,19 @@ import { useAuthStore } from "@/store/store";
 import { Link } from "react-router-dom";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Input } from "./ui/input";
+import { Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption } from "./ui/table";
+import {  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem } from "./ui/select";
 
 import {
   Bookmark,
@@ -66,79 +79,80 @@ const ProblemTable = ({ problems }) => {
           Create Playlist
         </button>
       </div>
-      <div className="flex flex-wrap justfiy-between items-center mb-6 gap-4">
+
+      <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
         <Input
           type="text"
-          placeholder="search by title"
-          className="Input Input-bordered w-full md:w-1/3 bg-base-200"
+          placeholder="Search by title"
+          className="w-full md:w-1/3 bg-base-200"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <select
-          className="select select-bordered bg-base-200"
-          value={difficulty}
-          onChange={(e) => setDifficulty(e.target.value)}
-        >
-          <option value="ALL">All Diffculties</option>
-          {Diffculties.map((diff) => (
-            <option key={diff} value={diff}>
-              {diff[0].toUpperCase() + diff.slice(1).toLowerCase()}
-            </option>
-          ))}
-        </select>
-        <select className="select select-bordered bg-base-200">
-          {allTags.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
+        <Select value={difficulty} onValueChange={setDifficulty}>
+          <SelectTrigger className="w-[200px] bg-base-200">
+            <SelectValue placeholder="Select difficulty" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">All Difficulties</SelectItem>
+            {Diffculties.map((diff) => (
+              <SelectItem key={diff} value={diff}>
+                {diff[0] + diff.slice(1).toLowerCase()}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={selectedTag} onValueChange={setSelectedTag}>
+          <SelectTrigger className="w-[200px] bg-base-200">
+            <SelectValue placeholder="Select tag" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">All Tags</SelectItem>
+            {allTags.map((tag) => (
+              <SelectItem key={tag} value={tag}>
+                {tag}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-     {/* ininite scroll loop */}
-
-       <div className="overflow-x-auto">
+      <div className="overflow-x-auto">
         <InfiniteScroll
-         dataLength={items.length}
-         next={fetchMoreData}
-         hasMore={items.length < filterdProblems.length}
-         loader={<h4 className="text-center my-4 ">Loading more problem...</h4>}
-         scrollableTarget="scroll"
+          dataLength={items.length}
+          next={fetchMoreData}
+          hasMore={items.length < filterdProblems.length}
+          loader={<h4 className="text-center my-4">Loading more problems...</h4>}
+          scrollableTarget="scroll"
         >
-    
-
-        {/* <div className="overflow-x-auto rounded-xl shadow-md"> */}
-        <table className="table table-zebra table-lg bg-base-200 text-base-content">
-        <thead className="bg-base-200">
-          <tr>
-        <th>Solved</th>
-        <th>Title</th>
-        <th>Tags</th>
-        <th>Difficulty</th>
-        <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
+          <Table className="bg-base-200 text-base-content">
+            <TableHeader className="bg-base-200">
+              <TableRow>
+                <TableHead>Solved</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>Tags</TableHead>
+                <TableHead>Difficulty</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {items.map((problem, index) => (
-                <tr key={problem.id || index}>
-                  <td>{problem.solved ? "✅" : "❌"}</td>
-                  <td>{problem.title}</td>
-                  <td>{problem.tags?.join(", ")}</td>
-                  <td>{problem.difficulty}</td>
-                  <td>
-                    {/* Add edit/view/delete buttons if needed */}
+                <TableRow key={problem.id || index}>
+                  <TableCell>{problem.solved ? "✅" : "❌"}</TableCell>
+                  <TableCell>{problem.title}</TableCell>
+                  <TableCell>{problem.tags?.join(", ")}</TableCell>
+                  <TableCell>{problem.difficulty}</TableCell>
+                  <TableCell>
                     <button className="btn btn-sm btn-outline">View</button>
-                  </td>
-                    </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-        </table>
-                </InfiniteScroll>
-
-        </div>
+            </TableBody>
+          </Table>
+        </InfiniteScroll>
+      </div>
     </div>
-  
   );
 };
 
