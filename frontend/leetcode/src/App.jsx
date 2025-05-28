@@ -9,6 +9,7 @@ import { Loader } from "lucide-react";
 import Layout from "./layout/Layout";
 import AdminPanel from "./components/AdminPanel";
 import AddProblem from "./pages/AddProblem";
+import ProblemTable from "./components/ProblemTable";
 const App = () => {
   const {authUser, isCheckingAuth,checkAuth} = useAuthStore()
   useEffect(() => {
@@ -35,6 +36,7 @@ if (isCheckingAuth && !authUser) {
       <Routes>
         <Route path="/" element={<Layout/>}>
         <Route index element={authUser?<Home/>:<Navigate to={"/login"}/>}/>
+          <Route path = "/get-problems/:id" element={authUser?<ProblemTable/>: <Navigate to={"/"}/>}/>
         </Route>
         <Route element={<AdminPanel/>}>
         <Route path="/add-problem" element={authUser?<AddProblem/>: <Navigate to={"/"}/>}/>

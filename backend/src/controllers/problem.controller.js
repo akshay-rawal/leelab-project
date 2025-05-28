@@ -227,7 +227,17 @@ const getProblemById = asyncHandlers(async (req, res) => {
   
 const getAllProblems = asyncHandlers(async (req, res) => {
   try {
-    const problems = await db.problem.findMany();
+    const problems = await db.problem.findMany(
+      {
+        include:{
+          solvedProblemByUser:{
+            where:{
+              userId:req.user.id
+            }
+          }
+        }
+      }
+    );
   
       if (!problems) {
         return res.status(404).json(new apiError(404, "No problem found!"));

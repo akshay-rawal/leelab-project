@@ -30,6 +30,7 @@ import {
 import { Checkbox } from "./ui/checkbox";
 
 
+
 const ProblemTable = ({ problems }) => {
   const [search, setSearch] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
@@ -70,6 +71,10 @@ const ProblemTable = ({ problems }) => {
        },500)
   }
  
+    const handleDelete = (id)=>{
+            
+    }
+    
 
 
    return (
@@ -142,7 +147,7 @@ const ProblemTable = ({ problems }) => {
                 const isSolved = (problem.solvedBy || []).some(
                   (user) => user.createdBy === authUser?.id
                 )
-
+                
                 return (
                   <TableRow key={problem.id || index}>
                     <TableCell>
@@ -150,7 +155,8 @@ const ProblemTable = ({ problems }) => {
                     </TableCell>
                     <TableCell>
                       <Link
-                        to={`problem/${problem.id}`}
+                        to={`/get-problems/${problem.id}`}
+                      
                         className="font-semibold hover:underline"
                       >
                         {problem.title}
