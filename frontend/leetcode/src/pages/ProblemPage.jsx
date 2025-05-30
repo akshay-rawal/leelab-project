@@ -50,65 +50,105 @@ export const ProblemPge = () => {
         output: tc.output,
       }))
     ) || [];
+  }, [singleProblem, selectedLanguage]);
+  const handleLanguageChange = (e) => {
+    const lang = e.target.value;
+    setSelectedLanguage(lang);
+    setCode(singleProblem.codeSnippets?.[lang] || "");
+  };
 
-   
-  },[singleProblem,selectedLanguage]);
-const handleLanguageChange = (e)=>{
-       const lang = e.target.value
-       setSelectedLanguage(lang)
-       setCode(singleProblem.codeSnippets?.[lang] || "")
-       
-   }
-   
-   const renderTabContent = ()=>{
-    switch(activeTab){
+  const renderTabContent = () => {
+    switch (activeTab) {
       case "description":
         return (
           <div className="prose max-w-none">
             <p className="text-lg mb-6">{singleProblem.description}</p>
             {singleProblem.examples && (
               <>
-              <h3 className="text-xl font-bold mb-4">Examples:</h3>
-               {Object.entries(singleProblem.examples).map(([lang,example],idx)=>(
-                <div key={lang} className="bg-base-200 p-6 rounded-xl mb-6 fono-momo" >
-                  <div className="mb-4">
-                    <div className="text-indigo-300 mb-2 text-base font-semibold">
-                      Input:
-                    </div>
-                    <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white">
-                    {example.input}
-                    </span>
-                  </div>
-                  <div className="mb-4">
-                    <div className="text-indigo-300 mb-2 text-base font-semibold">
-                      Output:
-                      </div> 
-                      <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white">
-                    {example.output}
-                    </span> 
-                  </div>
-                  {example.explanation && (
-                    <div>
-                      <div className="text-emerald-200 mb-2 text-base font-semibold">
-                        Explanation:
-                     </div>
-                       <p className="text-base-content/70 text-lg font-semibold">{example.explanation}</p>
+                <h3 className="text-xl font-bold mb-4">Examples:</h3>
+                {Object.entries(singleProblem.examples).map(
+                  ([lang, example], idx) => (
+                    <div
+                      key={lang}
+                      className="bg-base-200 p-6 rounded-xl mb-6 fono-momo"
+                    >
+                      <div className="mb-4">
+                        <div className="text-indigo-300 mb-2 text-base font-semibold">
+                          Input:
+                        </div>
+                        <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white">
+                          {example.input}
+                        </span>
                       </div>
-                  )}
-                  
-                   </div>
-               ))}
+                      <div className="mb-4">
+                        <div className="text-indigo-300 mb-2 text-base font-semibold">
+                          Output:
+                        </div>
+                        <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white">
+                          {example.output}
+                        </span>
+                      </div>
+                      {example.explanation && (
+                        <div>
+                          <div className="text-emerald-200 mb-2 text-base font-semibold">
+                            Explanation:
+                          </div>
+                          <p className="text-base-content/70 text-lg font-semibold">
+                            {example.explanation}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )
+                )}
               </>
-             
             )}
 
-            {s}
+            {singleProblem.constraints && (
+              <>
+                <h3 className="text-xl font-bold mb-4">Constraints</h3>
+                <div className="bg-base-200 p-6 rounded-xl mb-6">
+                  <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white text-lg">
+                    {singleProblem.constraints}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
-          
-        )
+        );
+      case "submissions":
+        return (
+          <SubmissionList
+            submissions={submissions}
+            isLoading={isSubmissionLoading}
+          />
+        );
+      case "discussion":
+        return (
+          <div className="p-4 text-center text-base-content/70">
+            No discussion yet
+          </div>
+        );
+      case "hints":
+        return (
+          <div className="p-4">
+            {singleProblem?.hints ? (
+              <div className="bg-base-200 p-6 rounded-xl">
+                <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white text-lg">
+                  {singleProblem.hints}
+                </span>
+              </div>
+            ) : (
+              <div className="text-center text-base-content/70">
+                No hints Avaiable
+              </div>
+            )}
+          </div>
+        );
+      default:
+        return null;
     }
-   }
-
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200">
@@ -148,7 +188,7 @@ const handleLanguageChange = (e)=>{
           <Select
             className="select select-bordered select-primary w-40"
             value={selectedLanguage}
-            onchange={handleLanguageChange} 
+            onchange={handleLanguageChange}
           >
             {Object.keys(singleProblem.codeSnippets || {}).map((lang) => (
               <option key={lang} value={lang}>
@@ -159,40 +199,55 @@ const handleLanguageChange = (e)=>{
         </Button>
       </nav>
       <div className="container mx-auto p-4">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="card bg-base-100 shadow-xl">
-          <div className="card-body p-0">
-            <div className="tabs tabs-bordered"></div>
-            <Button className={`tab gap-2 ${activeTab === "description" ? "tab-active" : ""}`}
-            onClick={()=>setActiveTab("description")}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body p-0">
+              <div className="tabs tabs-bordered"></div>
+              <Button
+                className={`tab gap-2 ${activeTab === "description" ? "tab-active" : ""}`}
+                onClick={() => setActiveTab("description")}
+              >
+                <FileText className="w-4 h-4">Description</FileText>
+              </Button>
+              <Button
+                className={`tab gap-2 ${activeTab === "submissions" ? "tab-active" : ""}`}
+                onClick={() => setActiveTab("submissions")}
+              >
+                <Code2 className="w-4 h-4" />
+                Submissions
+              </Button>
+              <Button
+                className={`tab gap-2 ${activeTab === "discussion" ? "tab-active" : ""}`}
+                onClick={() => setActiveTab("discussion")}
+              >
+                <MessageSquare className="w-4 h-4" />
+                Discussion
+              </Button>
+              <Button
+                className={`tab gap-2 ${activeTab === "hints" ? "tab-active" : ""}`}
+                onClick={() => setActiveTab("hints")}
+              >
+                <Lightbulb className="w-4 h-4" />
+                Hints
+              </Button>
+            </div>
 
-               <FileText className="w-4 h-4">
-                Description
-               </FileText>
-            </Button>
-            <Button className={`tab gap-2 ${activeTab === "submissions" ? "tab-active" : ""}`}
-             onClick={()=>setActiveTab("submissions")}>
-              <Code2 className="w-4 h-4"/>
-              Submissions
-             </Button>
-              <Button className={`tab gap-2 ${activeTab === "discussion" ? "tab-active" : ""}`}
-             onClick={()=>setActiveTab("discussion")}>
-              <MessageSquare className="w-4 h-4"/>
-              Discussion
-             </Button>
-              <Button className={`tab gap-2 ${activeTab === "hints" ? "tab-active" : ""}`}
-             onClick={()=>setActiveTab("hints")}>
-              <Lightbulb className="w-4 h-4"/>
-              Hints
-             </Button>
+            <div className="p-6">{renderTabContent()}</div>
+
           </div>
+          <div className="card bg-base-100 shadow-xl">
+            <div className="card-body p-0">
+              <div className="tabs tabs-borderd">
 
-          <div className="p-6">
-            {renderTabContent()}
+                <button className="tab tab-active gap-2">
+                  <Terminal className="w-4 h-4"/>
+                 Code Editor
+                </button>
+              </div>
+              <div className="h-[600px] w-full"></div>
+              </div> 
           </div>
         </div>
-      </div>
-
       </div>
     </div>
   );
