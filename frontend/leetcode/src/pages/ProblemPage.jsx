@@ -19,7 +19,6 @@ import {
   ThumbsUp,
   Home,
 } from "lucide-react";
-import { json } from "stream/consumers";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 
@@ -52,13 +51,65 @@ export const ProblemPge = () => {
       }))
     ) || [];
 
-   const handleLanguageChange = (e)=>{
+   
+  },[singleProblem,selectedLanguage]);
+const handleLanguageChange = (e)=>{
        const lang = e.target.value
        setSelectedLanguage(lang)
        setCode(singleProblem.codeSnippets?.[lang] || "")
        
    }
-  });
+   
+   const renderTabContent = ()=>{
+    switch(activeTab){
+      case "description":
+        return (
+          <div className="prose max-w-none">
+            <p className="text-lg mb-6">{singleProblem.description}</p>
+            {singleProblem.examples && (
+              <>
+              <h3 className="text-xl font-bold mb-4">Examples:</h3>
+               {Object.entries(singleProblem.examples).map(([lang,example],idx)=>(
+                <div key={lang} className="bg-base-200 p-6 rounded-xl mb-6 fono-momo" >
+                  <div className="mb-4">
+                    <div className="text-indigo-300 mb-2 text-base font-semibold">
+                      Input:
+                    </div>
+                    <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white">
+                    {example.input}
+                    </span>
+                  </div>
+                  <div className="mb-4">
+                    <div className="text-indigo-300 mb-2 text-base font-semibold">
+                      Output:
+                      </div> 
+                      <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white">
+                    {example.output}
+                    </span> 
+                  </div>
+                  {example.explanation && (
+                    <div>
+                      <div className="text-emerald-200 mb-2 text-base font-semibold">
+                        Explanation:
+                     </div>
+                       <p className="text-base-content/70 text-lg font-semibold">{example.explanation}</p>
+                      </div>
+                  )}
+                  
+                   </div>
+               ))}
+              </>
+             
+            )}
+
+            {s}
+          </div>
+          
+        )
+    }
+   }
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200">
       <nav className="navbar bg-base-100 shadow-lg px-4">
@@ -107,7 +158,40 @@ export const ProblemPge = () => {
           </Select>
         </Button>
       </nav>
-      <div className="contaniner mx-auto p-4 ">
+      <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="card bg-base-100 shadow-xl">
+          <div className="card-body p-0">
+            <div className="tabs tabs-bordered"></div>
+            <Button className={`tab gap-2 ${activeTab === "description" ? "tab-active" : ""}`}
+            onClick={()=>setActiveTab("description")}>
+
+               <FileText className="w-4 h-4">
+                Description
+               </FileText>
+            </Button>
+            <Button className={`tab gap-2 ${activeTab === "submissions" ? "tab-active" : ""}`}
+             onClick={()=>setActiveTab("submissions")}>
+              <Code2 className="w-4 h-4"/>
+              Submissions
+             </Button>
+              <Button className={`tab gap-2 ${activeTab === "discussion" ? "tab-active" : ""}`}
+             onClick={()=>setActiveTab("discussion")}>
+              <MessageSquare className="w-4 h-4"/>
+              Discussion
+             </Button>
+              <Button className={`tab gap-2 ${activeTab === "hints" ? "tab-active" : ""}`}
+             onClick={()=>setActiveTab("hints")}>
+              <Lightbulb className="w-4 h-4"/>
+              Hints
+             </Button>
+          </div>
+
+          <div className="p-6">
+            {renderTabContent()}
+          </div>
+        </div>
+      </div>
 
       </div>
     </div>
