@@ -2,7 +2,8 @@ import { useParams } from "react-router-dom";
 import React from "react";
 import { useEffect, useState } from "react";
 import { Editor } from "@monaco-editor/react";
-import UseProblemStore from "@/store/ProblemStore";
+import { UseProblemStore } from "@/store/ProblemStore";
+import { Link } from "react-router-dom";
 import {
   Play,
   FileText,
@@ -22,10 +23,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 
+
 export const ProblemPge = () => {
   const { id } = useParams();
   const { singleProblemLoading, singleProblem, getSingleProblem } =
     UseProblemStore();
+    console.log("singleProblem...",singleProblem);
+    
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
@@ -233,20 +237,79 @@ export const ProblemPge = () => {
             </div>
 
             <div className="p-6">{renderTabContent()}</div>
-
           </div>
           <div className="card bg-base-100 shadow-xl">
             <div className="card-body p-0">
               <div className="tabs tabs-borderd">
-
                 <button className="tab tab-active gap-2">
-                  <Terminal className="w-4 h-4"/>
-                 Code Editor
+                  <Terminal className="w-4 h-4" />
+                  Code Editor
                 </button>
               </div>
-              <div className="h-[600px] w-full"></div>
-              </div> 
+              <div className="h-[600px] w-full">
+              <Editor
+                height={"100%"}
+                language={selectedLanguage.toLowerCase()}
+                theme="vs-dark"
+                value={code}
+                onChange={(value) => setCode(value || "")}
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 22,
+                  wordWrap: "on",
+                  scrollBeyondLastLine: false,
+                  readOnly:false,
+                  automaticLayout: true,
+                }}
+              />
+              </div>
+
+              <div className="p-4 border-t border-base-300 bg-base-200">
+                <div className="flex justify-between items-center">
+                  <button className={`btn btn-primary gap-2 ${isExecuting ? "loading" : ""}`}
+                  onClick={handleRunCode}
+                  disabled={isExecuting}
+                  >
+                    {!isExecuting && <Play className="w-4 h-4"/>}
+                    Run Code
+                    </button>
+                    <button className="btn btn-success gap-2">
+                      Submit Solution 
+                    </button>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
+
+      <div className="card bg-base-100 shadow-xl mt-6">
+        <div className="card-body">
+          {
+            submission ? (<h1>Submission Data</h1>):<> 
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold">Test Cases</h3>
+              <div className="overflow-x-auto">
+                <table className="table table-zebra w-full">
+                  <thead>
+                    <tr>
+                      <th>Input</th>
+                      <th>Expected Output</th>
+                    </tr>
+
+                  </thead>
+                  <tbody>
+                    {testcases.map((testCase,index)=>(
+                      <tr key={index}>
+                        <td className="font-mono">{testCase.input}</td>
+                            <td className="font-mono">{testCase.output}</td>
+                      </tr> 
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              </div></>
+          }
         </div>
       </div>
     </div>

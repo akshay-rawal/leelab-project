@@ -4,7 +4,7 @@ import {toast} from "react-hot-toast"
 
 
 
- const UseProblemStore = create((set)=>({
+ export const UseProblemStore = create((set)=>({
    allProblems:[],
    singleProblem:null,
    allProblemLoading:false,
@@ -17,9 +17,9 @@ import {toast} from "react-hot-toast"
     set({ singleProblemLoading: true });
 
     const res = await axiosInstance.get(`/problems/get-problems/${problemId}`);
-    console.log("✅ Single Problem:", res.data);
-
+console.log("Logged from Zustand:", problem); 
     set({ singleProblem: res.data.problem, singleProblemLoading: false });
+    
   } catch (error) {
     console.error("❌ Error fetching single problem:", error.message);
     toast.error("Failed to load problem. Please try again.");
@@ -59,4 +59,3 @@ getAllProblem: async () => {
 
 })) 
 
-export default UseProblemStore;

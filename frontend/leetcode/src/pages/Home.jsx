@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import UseProblemStore from "@/store/ProblemStore";
+import { UseProblemStore } from "@/store/ProblemStore";
 import { Loader } from "lucide-react";
 import ProblemTable from "@/components/ProblemTable";
 const Home = () => {
