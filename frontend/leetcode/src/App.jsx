@@ -1,51 +1,48 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import Home from "./pages/Home";
+import HomePage from "./pages/Home";
 import LoginPage from "./pages/Login";
-import { useAuthStore } from "./store/store";
-import SignupPage from "./pages/Signup";
-import { Loader } from "lucide-react";
+import SignupPage from "./pages/Signup"; 
 import Layout from "./layout/Layout";
 import AdminPanel from "./components/AdminPanel";
 import AddProblem from "./pages/AddProblem";
-import ProblemTable from "./components/ProblemTable";
-import { ProblemPge } from "./pages/ProblemPage";
+import { ProblemPage } from "./pages/ProblemPage";                               
+import { useAuthStore } from "./store/store";
+import { Loader } from "lucide-react";
+
 const App = () => {
-  const {authUser, isCheckingAuth,checkAuth} = useAuthStore()
+  const { authUser, isCheckingAuth, checkAuth } = useAuthStore();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-
-    if (token) {
-      checkAuth();
-    }
+    if (token) checkAuth();
   }, []);
 
-if (isCheckingAuth && !authUser) {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <Loader className="size-10 animate-spin" />
-    </div>
-  );
-}
+  if (isCheckingAuth && !authUser) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="size-10 animate-spin" />
+      </div>
+    );
+  }
 
-
   return (
- 
     <div className="flex flex-col items-center justify-start">
-          <Toaster />
+      <Toaster />
       <Routes>
-        <Route path="/" element={<Layout/>}>
-        <Route index element={authUser?<Home/>:<Navigate to={"/login"}/>}/>
-          <Route path = "/get-problems/:id" element={authUser?<ProblemPge/>: <Navigate to={"/"}/>}/>
+        {/* Authenticated Layout Routes */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={authUser ? <HomePage/> : <Navigate to="/login" />} />
+          <Route path="get-problems/:id" element={authUser ? <ProblemPage /> : <Navigate to="/" />} />
         </Route>
-        <Route element={<AdminPanel/>}>
-        <Route path="/add-problem" element={authUser?<AddProblem/>: <Navigate to={"/"}/>}/>
-        
-        </Route>
-        <Route path="/login" element={!authUser?<LoginPage/>: <Navigate to={"/"}/>}></Route>
-        <Route path="/sign-up" element={!authUser?<SignupPage/> : <Navigate to={"/"}/>}></Route>
-        <Route path="/" element={authUser?<Home/> : <Navigate to={"/login"}/>}></Route>
+
+        {/* Admin Routes (optional: add Layout if needed) */}
+        <Route path="/add-problem" element={authUser ? <AddProblem /> : <Navigate to="/" />} />
+
+        {/* Auth Routes */}
+        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+        <Route path="/sign-up" element={!authUser ? <SignupPage /> : <Navigate to="/" />} />
       </Routes>
     </div>
   );

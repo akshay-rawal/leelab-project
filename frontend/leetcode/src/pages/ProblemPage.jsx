@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import React from "react";
 import { useEffect, useState } from "react";
 import { Editor } from "@monaco-editor/react";
-import { UseProblemStore } from "@/store/ProblemStore";
+import { useProblemStore } from "@/store/ProblemStore";
 import { Link } from "react-router-dom";
 import {
   Play,
@@ -11,7 +11,7 @@ import {
   Lightbulb,
   Bookmark,
   Share2,
-  Clock,
+  Clock,  
   ChevronRight,
   BookOpen,
   Terminal,
@@ -22,13 +22,27 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { useExecutionStore } from "@/store/ExecutionStore";
+import { getLanguageId } from "@/libs/lang";
 
 
-export const ProblemPge = () => {
-  const { id } = useParams();
-  const { singleProblemLoading, singleProblem, getSingleProblem } =
-    UseProblemStore();
-    console.log("singleProblem...",singleProblem);
+
+export const ProblemPage = () => {
+
+     const problem = useProblemStore((state) => state.problem);
+     console.log("Problem...",problem);
+     
+      const getProblemById = useProblemStore((state) => state.getProblemById);
+      const isProblemLoading = useProblemStore((state) => state.isProblemLoading);
+    console.log("Problem...",problem);
+    if (isProblemLoading) {
+  return <div className="p-4 text-center">Loading problem...</div>;
+}
+
+if (!problem) {
+  return <div className="p-4 text-center text-red-500">Problem not found.</div>;
+}
+
     
   const [code, setCode] = useState("");
   const [activeTab, setActiveTab] = useState("description");
@@ -36,29 +50,39 @@ export const ProblemPge = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testcases, setTestCases] = useState([]);
 
+  const {execexecuteCode,isExecuting,submission} = useExecutionStore()
+  const { id } = useParams();
+  console.log("🟡 id from useParams:", id);
+
   const submissionCount = 10;
 
   useEffect(() => {
-    getSingleProblem(id);
-  }, [id]);
+  if (id) {
+    console.log("➡️ useEffect: id =", id);
+    getProblemById(id);
+  } else {
+    console.log("❌ No id in useParams");
+  }
+}, [id]);
+
 
   useEffect(() => {
     setCode(
-      singleProblem.codeSnippets?.[selectedLanguage] ||
+      problem.codeSnippets?.[selectedLanguage] ||
         submission?.sourceCode ||
         ""
     );
     setTestCases(
-      singleProblem.testcases?.map((tc) => ({
+      problem.testcases?.map((tc) => ({
         input: tc.input,
         output: tc.output,
       }))
     ) || [];
-  }, [singleProblem, selectedLanguage]);
+  }, [problem, selectedLanguage]);
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setSelectedLanguage(lang);
-    setCode(singleProblem.codeSnippets?.[lang] || "");
+    setCode(problem.codeSnippets?.[lang] || "");
   };
 
   const renderTabContent = () => {
@@ -66,11 +90,11 @@ export const ProblemPge = () => {
       case "description":
         return (
           <div className="prose max-w-none">
-            <p className="text-lg mb-6">{singleProblem.description}</p>
-            {singleProblem.examples && (
+            <p className="text-lg mb-6">{problem.description}</p>
+            {problem.examples && (
               <>
                 <h3 className="text-xl font-bold mb-4">Examples:</h3>
-                {Object.entries(singleProblem.examples).map(
+                {Object.entries(problem.examples).map(
                   ([lang, example], idx) => (
                     <div
                       key={lang}
@@ -108,12 +132,12 @@ export const ProblemPge = () => {
               </>
             )}
 
-            {singleProblem.constraints && (
+            {problem.constraints && (
               <>
                 <h3 className="text-xl font-bold mb-4">Constraints</h3>
                 <div className="bg-base-200 p-6 rounded-xl mb-6">
                   <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white text-lg">
-                    {singleProblem.constraints}
+                    {problem.constraints}
                   </span>
                 </div>
               </>
@@ -136,10 +160,10 @@ export const ProblemPge = () => {
       case "hints":
         return (
           <div className="p-4">
-            {singleProblem?.hints ? (
+            {problem?.hints ? (
               <div className="bg-base-200 p-6 rounded-xl">
                 <span className="bg-black/90 px-4 py-1 rounded-lg font-semibold text-white text-lg">
-                  {singleProblem.hints}
+                  {problem.hints}
                 </span>
               </div>
             ) : (
@@ -154,21 +178,33 @@ export const ProblemPge = () => {
     }
   };
 
+  const handleRunCode = (e) => {
+    e.preventDefault();
+    try {
+      const language_id = getLanguageId(selectedLanguage);
+      const stdin = problem.testcases.map((tc) => tc.input);
+      const expected_outputs = problem.testcases.map((tc) => tc.output);
+      executeCode(code, language_id, stdin, expected_outputs, id);
+    } catch (error) {
+      console.log("Error executing code", error);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200">
-      <nav className="navbar bg-base-100 shadow-lg px-4">
+    <div className="min-h-screen bg-gradient-to-br from-base-300 to-base-200 w-full">
+      <nav className="container navbar bg-base-100 shadow-lg px-4">
         <div className="flex-1 gp-2">
           <Link to={"/"} className="flex items-center gap-2 text-primary">
             <Home className="w-6 h-6" />
           </Link>
           <div className="mt-2">
-            <h1 className="text-xl font-bold">{singleProblem.title}</h1>
+            <h1 className="text-xl font-bold">{problem.title}</h1>
             <div className="flex items-center gap-2 text-sm text-base-content/70 mt-5">
               <Clock className="w-4 h-4" />
 
               <span>
                 Updated{" "}
-                {new Date(singleProblem.createdAt).toLocaleString("en-US", {
+                {new Date(problem.createdAt).toLocaleString("en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -194,7 +230,7 @@ export const ProblemPge = () => {
             value={selectedLanguage}
             onchange={handleLanguageChange}
           >
-            {Object.keys(singleProblem.codeSnippets || {}).map((lang) => (
+            {Object.keys(problem.codeSnippets || {}).map((lang) => (
               <option key={lang} value={lang}>
                 {lang.charAt(0).toUpperCase() + lang.slice(1)}
               </option>
